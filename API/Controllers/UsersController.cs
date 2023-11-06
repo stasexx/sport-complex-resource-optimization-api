@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Application.Models.Dtos;
+using SportComplexResourceOptimizationApi.Application.Models.Identity;
+using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 using SportComplexResourceOptimizationApi.Application.Paging;
 
 namespace SportComplexResourceOptimization.Api.Controllers;
@@ -23,6 +25,13 @@ public class UserController : BaseController
         return Ok();
     }
 
+    [HttpPost("login")]
+    public async Task<ActionResult<TokensModel>> LoginAsync([FromBody] LoginUserDto login, CancellationToken cancellationToken)
+    {
+        var tokens = await _userService.LoginAsync(login, cancellationToken);
+        return Ok(tokens);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUserAsync(string id, CancellationToken cancellationToken)
     {
@@ -36,4 +45,13 @@ public class UserController : BaseController
         var users = await _userService.GetUsersPageAsync(pageNumber, pageSize, cancellationToken);
         return Ok(users);
     }
+
+    [HttpPut]
+    public async Task<ActionResult<UpdateUserModel>> UpdateAsync([FromBody] UserUpdateDto userDto, CancellationToken cancellationToken)
+    {
+        var updatedUserModel = await _userService.UpdateAsync(userDto, cancellationToken);
+        return Ok(updatedUserModel);
+    }
+
+
 }

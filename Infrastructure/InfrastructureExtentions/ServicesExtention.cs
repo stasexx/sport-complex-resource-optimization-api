@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
-using SmartInventorySystemApi.Infrastructure.Services.Identity;
+using SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExtentions;
 
@@ -16,6 +16,8 @@ public static class ServicesExtention
     {
         services.AddScoped<IUserService, UsersService>();
         services.AddScoped<ITokensService, TokensService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+
         return services;
     }
 

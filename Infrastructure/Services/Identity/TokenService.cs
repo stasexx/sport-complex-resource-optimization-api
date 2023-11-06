@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 
-namespace SmartInventorySystemApi.Infrastructure.Services.Identity;
+namespace SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
 
 public class TokensService : ITokensService
 {
