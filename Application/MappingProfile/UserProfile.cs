@@ -1,5 +1,6 @@
 using AutoMapper;
 using SportComplexResourceOptimizationApi.Application.Models;
+using SportComplexResourceOptimizationApi.Application.Models.Dtos;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 using SportComplexResourceOptimizationApi.Entities;
 
@@ -9,7 +10,7 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<User, UserDto>().ReverseMap();
+        CreateMap<User, UserDto>();
         CreateMap<UserDto, User>();
     }
 }

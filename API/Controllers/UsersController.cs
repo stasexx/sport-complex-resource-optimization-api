@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models;
+using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 
 namespace SportComplexResourceOptimization.Api.Controllers;
 
@@ -15,7 +16,7 @@ public class UserController : BaseController
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> RegisterAsync([FromBody] UserDto register, CancellationToken cancellationToken)
+    public async Task<ActionResult> RegisterAsync([FromBody] UserCreateDto register, CancellationToken cancellationToken)
     {
         await _userService.AddUserAsync(register, cancellationToken);
         return Ok();
