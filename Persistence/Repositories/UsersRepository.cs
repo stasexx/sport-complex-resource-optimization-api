@@ -1,6 +1,6 @@
 using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepository;
-using SportComplexResourceOptimizationApi.Entities;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 

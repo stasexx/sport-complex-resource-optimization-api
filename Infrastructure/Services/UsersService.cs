@@ -8,8 +8,8 @@ using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Application.Models;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Application.Models.Dtos;
+using SportComplexResourceOptimizationApi.Application.Paging;
 using SportComplexResourceOptimizationApi.Domain.Entities;
-using SportComplexResourceOptimizationApi.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
 
@@ -34,6 +34,30 @@ public class UsersService : IUserService
         _tokensService = tokensService;
         _refreshTokensRepository = refreshTokensRepository;
         _mapper = mapper;
+    }
+
+    public async Task<PagedList<UserDto>> GetUsersPageAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        var entities = await _usersRepository.GetPageAsync(pageNumber, pageSize, cancellationToken);
+        var dtos = _mapper.Map<List<UserDto>>(entities);
+        var count = await _usersRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<UserDto>(dtos, pageNumber, pageSize, count);
+    }
+
+    public async Task<UserDto> GetUserAsync(string id, CancellationToken cancellationToken)
+    {
+        if (!ObjectId.TryParse(id, out var objectId))
+        {
+            throw new InvalidDataException("Provided id is invalid.");
+        }
+
+        var entity = await _usersRepository.GetOneAsync(objectId, cancellationToken);
+        if (entity == null)
+        {
+            throw new Exception(id);
+        }
+
+        return _mapper.Map<UserDto>(entity);
     }
 
     public async Task AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken)
@@ -65,8 +89,7 @@ public class UsersService : IUserService
         var refreshToken = new RefreshToken
         {
             Token = _tokensService.GenerateRefreshToken(),
-            ExpiryDateUTC = DateTime.UtcNow.AddDays(30),
-            CreatedById = userId,
+            ExpiryDateUTC = DateTime.UtcNow.AddDays(10),
             CreatedDateUtc = DateTime.UtcNow
         };
 

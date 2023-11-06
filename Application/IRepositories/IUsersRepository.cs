@@ -1,5 +1,5 @@
 using MongoDB.Bson;
-using SportComplexResourceOptimizationApi.Entities;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Application.IRepository;
 
