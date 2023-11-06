@@ -5,7 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using Persistence.Database;
 
-namespace SportComplexResourceOptimization.Persistence.Repositories;
+namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity:EntityBase
 {

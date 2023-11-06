@@ -57,6 +57,7 @@ public class UsersService : IUserService
         };
 
         await _usersRepository.AddAsync(user, cancellationToken);
+        var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
     }
 
     private async Task<RefreshToken> AddRefreshToken(ObjectId userId, CancellationToken cancellationToken)

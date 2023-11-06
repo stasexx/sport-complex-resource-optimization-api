@@ -1,9 +1,8 @@
 using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepository;
 using SportComplexResourceOptimizationApi.Domain.Entities;
-using SportComplexResourceOptimizationApi.Entities;
 
-namespace SportComplexResourceOptimization.Persistence.Repositories;
+namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
 public class RolesRepository : BaseRepository<Role>, IRolesRepository
 {

@@ -5,7 +5,7 @@ using SportComplexResourceOptimizationApi.Application.IRepository;
 using SportComplexResourceOptimizationApi.Domain.Entities.Identity;
 using SportComplexResourceOptimizationApi.Entities;
 
-namespace SportComplexResourceOptimization.Persistence.Repositories;
+namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
 public class QRCodeRepository : BaseRepository<QRCodeData>, IQRCodeRepository
 {
