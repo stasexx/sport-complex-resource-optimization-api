@@ -1,51 +1,47 @@
+using Application.Models.Dtos;
+using AutoMapper;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
+using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
 
-public class SportComlexesService : ISportComlexesService
+public class SportComplexesService : ISportComplexesService
 {
     private readonly ISportComplexesRepository _sportComplexesRepository;
 
-    private readonly IConfiguration _configuration;
+    private readonly IMapper _mapper;
 
-    public SportComlexesService(ISportComplexesRepository sportComplexesRepository, IConfiguration configuration)
+    public SportComplexesService(ISportComplexesRepository sportComplexesRepository, IMapper mapper)
     {
         _sportComplexesRepository = sportComplexesRepository;
-        _configuration = configuration;
+        _mapper = mapper;
     }
 
-    public async Task UploadImageToBlobStorage(Stream imageStream, string imageName)
+    public async Task<SportComplexDto> CreateSportComplex(SportComplexCreateDto sportComplexCreateDto, string ownerId,
+        CancellationToken cancellationToken)
     {
-        string connectionString = _configuration.GetConnectionString("AzureStorage:ConnectionStrings");
-        string containerName = "puctures";
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        var complex = _mapper.Map<SportComplex>(sportComplexCreateDto);
+        
+        complex.CreatedById = ObjectId.Parse(ownerId);
+        complex.CreatedDateUtc = DateTime.UtcNow;
 
-        using (var stream = new MemoryStream(/* ваш поток данных из загруженного файла */))
+        await _sportComplexesRepository.AddAsync(complex, cancellationToken);
+
+        var result = new SportComplexDto()
         {
-            await containerClient.UploadBlobAsync(imageName, stream);
-        }
+            Name = complex.Name,
+            Address = complex.Address,
+            Email = complex.Email,
+            Rating = complex.Rating,
+            Description = complex.Description
+        };
+
+        return result;
     }
 
-    public List<string> GetSportComplexImages(string sportComplexId)
-    {
-        string connectionString = "DefaultEndpointsProtocol=https;AccountName=sportcomplexorsblod;AccountKey=432UfBpjF6snXBXLT9Gdv8M+G86UakZ+FxPvQIcQ2UiAfjMD6iJG4KRpZXedsJi8kwFVwDNXt8KX+AStKk7t+Q==;EndpointSuffix=core.windows.net";
-        string containerName = $"pictures"; 
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-        var imageUrls = new List<string>();
-
-        foreach (var blobItem in containerClient.GetBlobs())
-        {
-            // Формуємо URL для кожного Blob-об'єкта
-            string imageUrl = $"https://{containerClient.Uri.Host}/{containerName}/{blobItem.Name}";
-            imageUrls.Add(imageUrl);
-        }
-
-        return imageUrls;
-    }
 }

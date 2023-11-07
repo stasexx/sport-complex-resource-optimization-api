@@ -1,3 +1,4 @@
+using Application.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
@@ -12,18 +13,19 @@ namespace SportComplexResourceOptimization.Api.Controllers;
 [Route("sportcomplexes")]
 public class SportComplexesController : BaseController 
 {
-    private readonly ISportComlexesService _sportComlexesService;
+    private readonly ISportComplexesService _sportComplexesService;
 
-    public SportComplexesController(ISportComlexesService sportComlexesService)
+    public SportComplexesController(ISportComplexesService sportComplexesService)
     {
-        _sportComlexesService = sportComlexesService;
+        _sportComplexesService = sportComplexesService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetUserAsync(string id, CancellationToken cancellationToken)
+    [HttpPost]
+    public async Task<IActionResult> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
+        CancellationToken cancellationToken)
     {
-        var imageUrls = _sportComlexesService.GetSportComplexImages(id);
-        return Ok(imageUrls);
+        await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
+        return Ok();
     }
-
+    
 }

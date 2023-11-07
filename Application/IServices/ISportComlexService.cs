@@ -1,8 +1,10 @@
+using Application.Models.Dtos;
+using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+
 namespace SportComplexResourceOptimizationApi.Application.IServices;
 
-public interface ISportComlexesService
+public interface ISportComplexesService
 {
-    Task UploadImageToBlobStorage(Stream imageStream, string imageName);
-
-    List<string> GetSportComplexImages(string sportComplexId);
+    Task<SportComplexDto> CreateSportComplex(SportComplexCreateDto sportComplexCreateDto, string ownerId,
+        CancellationToken cancellationToken);
 }

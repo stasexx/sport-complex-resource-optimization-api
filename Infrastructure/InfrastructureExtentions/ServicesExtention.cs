@@ -29,7 +29,7 @@ public static class ServicesExtention
         services.AddScoped<IUserService, UsersService>();
         services.AddScoped<ITokensService, TokensService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<ISportComlexesService, SportComlexesService>();
+        services.AddScoped<ISportComplexesService, SportComplexesService>();
         services.AddScoped<IStorageService, StorageService>();
 
         return services;
