@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
@@ -32,20 +33,7 @@ public class UserController : BaseController
         return Ok(tokens);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetUserAsync(string id, CancellationToken cancellationToken)
-    {
-        var user = await _userService.GetUserAsync(id, cancellationToken);
-        return Ok(user);
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<PagedList<UserDto>>> GetUsersPageAsync([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
-    {
-        var users = await _userService.GetUsersPageAsync(pageNumber, pageSize, cancellationToken);
-        return Ok(users);
-    }
-
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult<UpdateUserModel>> UpdateAsync([FromBody] UserUpdateDto userDto, CancellationToken cancellationToken)
     {
@@ -53,5 +41,20 @@ public class UserController : BaseController
         return Ok(updatedUserModel);
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDto>> GetUserAsync(string id, CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetUserAsync(id, cancellationToken);
+        return Ok(user);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<PagedList<UserDto>>> GetUsersPageAsync([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetUsersPageAsync(pageNumber, pageSize, cancellationToken);
+        return Ok(users);
+    }
 
 }

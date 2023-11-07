@@ -1,10 +1,11 @@
 using System.Data;
+using SportComplexResourceOptimizationApi.Domain.Common;
 
 namespace SportComplexResourceOptimizationApi.Domain.Entities;
 
-public class Reservation
+public class Reservation : EntityBase
 {
-    public DateTime ReservationDate { get; set; }
-
-    public int Time { get; set; }
+    public DateTime StartReservation { get; set; }
+    
+    public DateTime EndReservation { get; set; }
 }
