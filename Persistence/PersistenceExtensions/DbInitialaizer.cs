@@ -12,14 +12,35 @@ public class DbInitialaizer
 {
     private readonly IMongoCollection<User> _userCollection;
 
+    private readonly IMongoCollection<Role> _roleCollection;
+
     public DbInitialaizer(IServiceProvider serviceProvider)
     {
         _userCollection = serviceProvider.GetService<MongoDbContext>().Db.GetCollection<User>("Users");
+        _roleCollection = serviceProvider.GetService<MongoDbContext>().Db.GetCollection<Role>("Roles");
     }
 
     public async Task InitialaizeDb(CancellationToken cancellationToken)
     {
-        await AddUsers(cancellationToken);
+        await AddRoles(cancellationToken);
+    }
+
+    public async Task AddRoles(CancellationToken cancellationToken)
+    {
+        var roles = new Role[]
+        {
+            new Role
+            {
+                Name = "User"
+            },
+
+            new Role
+            {
+                Name = "Admin"
+            }
+        };
+
+        await _roleCollection.InsertManyAsync(roles);
     }
 
     public async Task AddUsers(CancellationToken cancellationToken)
