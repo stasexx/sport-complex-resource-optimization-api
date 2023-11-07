@@ -58,4 +58,61 @@ public class S3Controller : BaseController
 
         return Ok(imageUrls);
     }
+    
+    [HttpPost("/replace/{id}", Name = "ReplaceImage")]
+    public async Task<IActionResult> ReplaceImage(IFormFile newFile, string oldImageName, string id)
+    {
+        await using var memoryStream = new MemoryStream();
+        await newFile.CopyToAsync(memoryStream);
+
+        var newObjectName = $"{id}/main/{Guid.NewGuid()}";
+
+        var newS3Object = new S3Object()
+        {
+            BucketName = _config["AmazonS3Config:Bucket"],
+            InputStream = memoryStream,
+            Name = newObjectName
+        };
+
+        var cred = new AmazonCredentials()
+        {
+            AccessKey = _config["AmazonS3Config:AccessKey"],
+            SecretKey = _config["AmazonS3Config:SecretKey"],
+            BucketName = _config["AmazonS3Config:Bucket"]
+        };
+        
+        var deleteResult = await _storageService.DeleteImageAsync(oldImageName, cred);
+
+        if (deleteResult.StatusCode != 200)
+        {
+            return BadRequest($"Помилка при видаленні фотографії: {deleteResult.Message}");
+        }
+
+        var replaceResult = await _storageService.ReplaceImageAsync(oldImageName, newS3Object, cred);
+
+        if (replaceResult.StatusCode == 200)
+        {
+            return Ok("Фотографія була успішно замінена");
+        }
+        else
+        {
+            return BadRequest($"Помилка при заміні фотографії: {replaceResult.Message}");
+        }
+    }
+    
+    [HttpDelete("DeleteImage")]
+    public async Task<IActionResult> DeleteImage(string imageName)
+    {
+
+        var cred = new AmazonCredentials()
+        {
+            AccessKey = _config["AmazonS3Config:AccessKey"],
+            SecretKey = _config["AmazonS3Config:SecretKey"],
+            BucketName = _config["AmazonS3Config:Bucket"]
+        };
+
+        var result = await _storageService.DeleteImageAsync(imageName, cred);
+
+        return Ok(result);
+    }
 }

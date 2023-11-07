@@ -8,4 +8,9 @@ public interface IStorageService
     Task<S3ResponseDto> UploadFileAsync(S3Object s3Object, AmazonCredentials amazonS3Config);
 
     Task<StorageDto> GetSportComplexImagesAsync(string sportComplexId, AmazonCredentials amazonS3Config);
+    
+    Task<S3ResponseDto> DeleteImageAsync(string imageName, AmazonCredentials amazonS3Config);
+
+    Task<S3ResponseDto> ReplaceImageAsync(string oldImageName, S3Object newImage, AmazonCredentials amazonS3Config);
+
 }

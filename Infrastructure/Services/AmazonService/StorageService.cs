@@ -29,7 +29,7 @@ public class StorageService : IStorageService
                 InputStream = s3Object.InputStream,
                 Key = s3Object.Name,
                 BucketName = s3Object.BucketName,
-                CannedACL = S3CannedACL.NoACL
+                CannedACL = S3CannedACL.PublicReadWrite
             };
 
             using var client = new AmazonS3Client(credentials, config);
@@ -73,18 +73,18 @@ public class StorageService : IStorageService
         };
 
         var responseMain = await client.ListObjectsV2Async(requestMain);
-        
-        var mainImage = responseMain.S3Objects.Select(s3Object => s3Object.Key).FirstOrDefault();
-        
+    
+        var mainImage = responseMain.S3Objects.Select(s3Object => GetImageS3Url(amazonS3Config.BucketName, sportComplexId, s3Object.Key)).FirstOrDefault();
+    
         var requestNormal = new ListObjectsV2Request
         {
             BucketName = amazonS3Config.BucketName,
             Prefix = $"{sportComplexId}/normal/"
         };
-        
+    
         var responseNormal = await client.ListObjectsV2Async(requestNormal);
-        
-        var normalImages = responseNormal.S3Objects.Select(s3Object => s3Object.Key).ToList();
+    
+        var normalImages = responseNormal.S3Objects.Select(s3Object => GetImageS3Url(amazonS3Config.BucketName, sportComplexId, s3Object.Key)).ToList();
 
         var result = new StorageDto()
         {
@@ -93,5 +93,93 @@ public class StorageService : IStorageService
         };
 
         return result;
+    }
+    
+    public async Task<S3ResponseDto> DeleteImageAsync(string imageName, AmazonCredentials amazonS3Config)
+    {
+        var credentials = new BasicAWSCredentials(amazonS3Config.AccessKey, amazonS3Config.SecretKey);
+
+        var config = new AmazonS3Config()
+        {
+            RegionEndpoint = Amazon.RegionEndpoint.EUNorth1
+        };
+
+        var response = new S3ResponseDto();
+
+        try
+        {
+            using var client = new AmazonS3Client(credentials, config);
+
+            var deleteRequest = new DeleteObjectRequest
+            {
+                BucketName = amazonS3Config.BucketName,
+                Key = imageName
+            };
+
+            await client.DeleteObjectAsync(deleteRequest);
+
+            response.StatusCode = 200;
+            response.Message = $"{imageName} has been deleted successfully";
+        }
+        catch (AmazonS3Exception ex)
+        {
+            response.StatusCode = (int)ex.StatusCode;
+            response.Message = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = 500;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+    
+    public async Task<S3ResponseDto> ReplaceImageAsync(string oldImageName, S3Object newImage, AmazonCredentials amazonS3Config)
+    {
+        var credentials = new BasicAWSCredentials(amazonS3Config.AccessKey, amazonS3Config.SecretKey);
+
+        var config = new AmazonS3Config()
+        {
+            RegionEndpoint = Amazon.RegionEndpoint.EUNorth1
+        };
+
+        var response = new S3ResponseDto();
+
+        try
+        {
+            using var client = new AmazonS3Client(credentials, config);
+
+            var deleteRequest = new DeleteObjectRequest
+            {
+                BucketName = amazonS3Config.BucketName,
+                Key = oldImageName
+            };
+
+            await client.DeleteObjectAsync(deleteRequest);
+
+            await UploadFileAsync(newImage, amazonS3Config);
+
+            response.StatusCode = 200;
+            response.Message = $"{oldImageName} has been replaced with a new image";
+        }
+        catch (AmazonS3Exception ex)
+        {
+            response.StatusCode = (int)ex.StatusCode;
+            response.Message = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = 500;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+
+    private string GetImageS3Url(string bucketName, string sportComplexId, string imageKey)
+    {
+        return $"https://{bucketName}.s3.eu-north-1.amazonaws.com/{sportComplexId}/normal/{imageKey}";
     }
 }
