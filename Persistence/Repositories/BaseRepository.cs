@@ -5,7 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using Persistence.Database;
 
-namespace SportComplexResourceOptimization.Persistence.Repositories;
+namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity:EntityBase
 {
@@ -51,7 +51,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
                                      .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> GetTotalCountAsync()
+    public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken)
     {
         return (int)(await this._collection.EstimatedDocumentCountAsync());
     }

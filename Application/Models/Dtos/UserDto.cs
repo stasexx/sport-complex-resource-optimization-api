@@ -1,4 +1,4 @@
-namespace SportComplexResourceOptimizationApi.Application.Models;
+namespace SportComplexResourceOptimizationApi.Application.Models.Dtos;
 
 public class UserDto
 {
@@ -14,7 +14,4 @@ public class UserDto
 
     public string? Password { get; set; }
 
-    public string? RefreshToken { get; set; }
-
-    public DateTime? RefreshTokenExpiryDate { get; set; }
 }

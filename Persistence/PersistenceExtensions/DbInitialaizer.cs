@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence.Database;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 using SportComplexResourceOptimizationApi.Entities;
 
 namespace SportComplexResourceOptimizationApi.Persistence.PersistenceExtensions;
