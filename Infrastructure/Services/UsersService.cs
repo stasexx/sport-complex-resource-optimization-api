@@ -1,9 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using MongoDB.Bson;
-using SportComplexResourceOptimizationApi.Application.GlobalInstances;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
-using SportComplexResourceOptimizationApi.Application.IRepository;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;

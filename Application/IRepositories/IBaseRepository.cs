@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Domain.Common;
 
-namespace SportComplexResourceOptimizationApi.Application.IRepository;
+namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IBaseRepository<TEntity> where TEntity : EntityBase
 {

@@ -7,19 +7,32 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
+using Amazon.S3;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExtentions;
 
 public static class ServicesExtention
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+
+    public class AmazonS3Config
     {
+        public string AccessKey { get; set; }
+        public string SecretKey { get; set; }
+        public string BucketName { get; set; }
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+    {
+
+
         services.AddScoped<IUserService, UsersService>();
         services.AddScoped<ITokensService, TokensService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ISportComlexesService, SportComlexesService>();
 
         return services;
     }
+
 
     public static IServiceCollection AddJWTTokenAuthentication(this IServiceCollection services, IConfiguration configuration)
     {

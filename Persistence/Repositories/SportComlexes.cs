@@ -4,8 +4,8 @@ using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
-public class RolesRepository : BaseRepository<Role>, IRolesRepository
+public class SportComplexesRepository : BaseRepository<SportComplex>, ISportComplexesRepository
 {
-    public RolesRepository(MongoDbContext db) : base(db, "Roles") { }
+    public SportComplexesRepository(MongoDbContext db) : base(db, "SportComplexes") { }
 
 }

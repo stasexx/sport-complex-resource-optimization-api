@@ -1,9 +1,8 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence.Database;
-using SportComplexResourceOptimizationApi.Application.IRepository;
+using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Domain.Entities.Identity;
-using SportComplexResourceOptimizationApi.Entities;
 
 namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 

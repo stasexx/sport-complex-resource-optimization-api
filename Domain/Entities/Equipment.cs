@@ -6,5 +6,5 @@ public class Equipment : EntityBase
 {
     public string Name { get; set; }
 
-    public string Loation { get; set; }
+    public string Location { get; set; }
 }

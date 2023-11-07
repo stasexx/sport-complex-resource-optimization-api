@@ -1,9 +1,9 @@
 using SportComplexResourceOptimizationApi.Domain.Common;
-using SportComplexResourceOptimizationApi.Application.IRepository;
 using System.Linq.Expressions;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using Persistence.Database;
+using SportComplexResourceOptimizationApi.Application.IRepositories;
 
 namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
