@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
 using Amazon.S3;
+using SportComplexResourceOptimizationApi.Application.IServices.Amazon;
+using SportComplexResourceOptimizationApi.Infrastructure.Services.AmazonService;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExtentions;
 
@@ -23,12 +25,12 @@ public static class ServicesExtention
 
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-
-
+        
         services.AddScoped<IUserService, UsersService>();
         services.AddScoped<ITokensService, TokensService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ISportComlexesService, SportComlexesService>();
+        services.AddScoped<IStorageService, StorageService>();
 
         return services;
     }
