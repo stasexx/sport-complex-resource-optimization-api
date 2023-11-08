@@ -15,14 +15,7 @@ namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExten
 
 public static class ServicesExtention
 {
-
-    public class AmazonS3Config
-    {
-        public string AccessKey { get; set; }
-        public string SecretKey { get; set; }
-        public string BucketName { get; set; }
-    }
-
+    
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         
@@ -31,6 +24,9 @@ public static class ServicesExtention
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ISportComplexesService, SportComplexesService>();
         services.AddScoped<IStorageService, StorageService>();
+        services.AddScoped<IServiceService, ServicesService>();
+        services.AddScoped<IEquipmentService, EquipmentsService>();
+        services.AddScoped<IReservationService, ReservationService>();
 
         return services;
     }

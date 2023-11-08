@@ -1,12 +1,7 @@
-using Application.Models.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
-using SportComplexResourceOptimizationApi.Application.Models.Dtos;
-using SportComplexResourceOptimizationApi.Application.Models.Identity;
-using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
-using SportComplexResourceOptimizationApi.Application.Paging;
+
 
 namespace SportComplexResourceOptimization.Api.Controllers;
 

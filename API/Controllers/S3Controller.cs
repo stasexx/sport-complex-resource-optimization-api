@@ -25,13 +25,18 @@ public class S3Controller : BaseController
         await file.CopyToAsync(memoryStr);
         
         var objName = $"{id}/{type}/{Guid.NewGuid()}";
-
+        
         var s3Obj = new S3Object()
         {
             BucketName = _config["AmazonS3Config:Bucket"],
             InputStream = memoryStr,
             Name = objName
         };
+
+        if (type=="user")
+        {
+            s3Obj.BucketName = _config["AmazonS3Config:UserBucket"];
+        }
 
         var cred = new AmazonCredentials()
         {

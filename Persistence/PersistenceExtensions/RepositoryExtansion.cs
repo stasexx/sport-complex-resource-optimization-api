@@ -15,6 +15,9 @@ public static class RepositoryExtansion
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IRefreshTokensRepository, RefreshTokensRepository>();
         services.AddScoped<ISportComplexesRepository, SportComplexesRepository>();
+        services.AddScoped<IServicesRepository, ServicesRepository>();
+        services.AddScoped<IEquipmentsRepository, EquipmentsRepository>();
+        services.AddScoped<IReservationsRepository, ReservationsRepository>();
 
         return services;
     }
