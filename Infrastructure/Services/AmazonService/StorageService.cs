@@ -3,6 +3,8 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Application.Models.Dtos;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using SportComplexResourceOptimizationApi.Application.IServices.Amazon;
 using SportComplexResourceOptimizationApi.Application.Models.Amazon;
 using S3Object = SportComplexResourceOptimizationApi.Application.Models.Amazon.S3Object;
@@ -11,6 +13,13 @@ namespace SportComplexResourceOptimizationApi.Infrastructure.Services.AmazonServ
 
 public class StorageService : IStorageService
 {
+    private readonly IConfiguration _config;
+
+    public StorageService(IConfiguration config)
+    {
+        _config = config;
+    }
+    
     public async Task<S3ResponseDto> UploadFileAsync(S3Object s3Object, AmazonCredentials amazonS3Config)
     {
         var credentials = new BasicAWSCredentials(amazonS3Config.AccessKey, amazonS3Config.SecretKey);
@@ -53,6 +62,28 @@ public class StorageService : IStorageService
         }
 
         return response;
+    }
+    
+    public async Task<S3ResponseDto> ProcessUploadedFileAsync(IFormFile file, string bucketType, string photoType, string id)
+    {
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        var objName = $"{id}/{photoType}/{Guid.NewGuid()}";
+
+        var s3Obj = new S3Object()
+        {
+            BucketName = _config[$"AmazonS3Config:{bucketType}Bucket"],
+            InputStream = memoryStream,
+            Name = objName
+        };
+
+        var cred = new AmazonCredentials()
+        {
+            AccessKey = _config["AmazonS3Config:AccessKey"],
+            SecretKey = _config["AmazonS3Config:SecretKey"]
+        };
+
+        return await UploadFileAsync(s3Obj, cred);
     }
     
     public async Task<StorageDto> GetSportComplexImagesAsync(string sportComplexId, AmazonCredentials amazonS3Config)

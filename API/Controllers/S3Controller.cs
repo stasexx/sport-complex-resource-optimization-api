@@ -51,44 +51,13 @@ public class S3Controller : BaseController
     }
 
     [HttpPost(Name = "UploadFile")]
-    public async Task<IActionResult> UploadFile(IFormFile file, string type, string id)
+    public async Task<IActionResult> UploadFile(IFormFile file, string bucketType, string photoType, string id)
     {
-        await using var memoryStr = new MemoryStream();
-        await file.CopyToAsync(memoryStr);
-        
-        var objName = $"{id}/{type}/{Guid.NewGuid()}";
-        
-        var s3Obj = new S3Object()
-        {
-            BucketName = _config["AmazonS3Config:Bucket"],
-            InputStream = memoryStr,
-            Name = objName
-        };
-
-        if (type=="user")
-        {
-            s3Obj.BucketName = _config["AmazonS3Config:UserBucket"];
-        }
-        
-        /*if (type=="qr-code")
-        {
-            var qrCodeContent = "https://www.youtube.com/watch?v=558r4ahLt30";
-            var qrCodeImageBytes = _qrCodeService.GenerateQRCode(qrCodeContent);
-            s3Obj.BucketName = _config["AmazonS3Config:QRCodeBucket"];
-            s3Obj.InputStream = new MemoryStream(qrCodeImageBytes);
-            s3Obj.Name = $"{id}/qr-code/{Guid.NewGuid()}.png";
-        }*/
-
-        var cred = new AmazonCredentials()
-        {
-            AccessKey = _config["AmazonS3Config:AccessKey"],
-            SecretKey = _config["AmazonS3Config:SecretKey"]
-        };
-
-        var result = await _storageService.UploadFileAsync(s3Obj, cred);
+        var result = await _storageService.ProcessUploadedFileAsync(file, bucketType, photoType, id);
 
         return Ok(result);
     }
+    
     
     [HttpGet("images/{sportComplexId}")]
     public async Task<ActionResult<StorageDto>> GetSportComplexImages(string sportComplexId)
