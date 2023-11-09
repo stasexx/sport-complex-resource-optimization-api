@@ -1,6 +1,7 @@
 ﻿using Application.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices.Amazon;
+using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Application.Models.Amazon;
 
 namespace SportComplexResourceOptimization.Api.Controllers;
@@ -10,12 +11,43 @@ public class S3Controller : BaseController
 {
     private readonly IStorageService _storageService;
 
+    private readonly IQRCodeService _qrCodeService;
+
     private readonly IConfiguration _config;
 
-    public S3Controller(IStorageService storageService, IConfiguration config)
+    public S3Controller(IStorageService storageService, IQRCodeService qrCodeService, IConfiguration config)
     {
         _storageService = storageService;
+        _qrCodeService = qrCodeService;
         _config = config;
+    }
+    
+    [HttpPost("UploadQrCode")]
+    public async Task<IActionResult> UploadQrCode(string ssId, string userId, string serviceId, int usages)
+    {
+        await using var memoryStr = new MemoryStream();
+
+        var s3Obj = new S3Object()
+        {
+            BucketName = _config["AmazonS3Config:Bucket"],
+            InputStream = memoryStr,
+            Name = ""
+        };
+
+        var qrCodeImageBytes = _qrCodeService.GenerateQRCode(userId, serviceId, usages);
+        s3Obj.BucketName = _config["AmazonS3Config:QRCodeBucket"];
+        s3Obj.InputStream = new MemoryStream(qrCodeImageBytes);
+        s3Obj.Name = $"{ssId}/qr-code/{Guid.NewGuid()}.png";
+
+        var cred = new AmazonCredentials()
+        {
+            AccessKey = _config["AmazonS3Config:AccessKey"],
+            SecretKey = _config["AmazonS3Config:SecretKey"]
+        };
+
+        var result = await _storageService.UploadFileAsync(s3Obj, cred);
+
+        return Ok(result);
     }
 
     [HttpPost(Name = "UploadFile")]
@@ -37,6 +69,15 @@ public class S3Controller : BaseController
         {
             s3Obj.BucketName = _config["AmazonS3Config:UserBucket"];
         }
+        
+        /*if (type=="qr-code")
+        {
+            var qrCodeContent = "https://www.youtube.com/watch?v=558r4ahLt30";
+            var qrCodeImageBytes = _qrCodeService.GenerateQRCode(qrCodeContent);
+            s3Obj.BucketName = _config["AmazonS3Config:QRCodeBucket"];
+            s3Obj.InputStream = new MemoryStream(qrCodeImageBytes);
+            s3Obj.Name = $"{id}/qr-code/{Guid.NewGuid()}.png";
+        }*/
 
         var cred = new AmazonCredentials()
         {

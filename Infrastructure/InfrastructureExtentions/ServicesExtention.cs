@@ -27,6 +27,9 @@ public static class ServicesExtention
         services.AddScoped<IServiceService, ServicesService>();
         services.AddScoped<IEquipmentService, EquipmentsService>();
         services.AddScoped<IReservationService, ReservationService>();
+        services.AddScoped<IQRCodeService, QRCodeService>();
+        services.AddScoped<IServiceSubscriptionService, ServiceSubscriptionsService>();
+        services.AddScoped<IAbonnementService, AbonnementsService>();
 
         return services;
     }
