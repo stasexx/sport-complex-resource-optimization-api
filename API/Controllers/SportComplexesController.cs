@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 
 
 namespace SportComplexResourceOptimization.Api.Controllers;
@@ -21,6 +23,14 @@ public class SportComplexesController : BaseController
     {
         await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
         return Ok();
+    }
+    
+    [HttpPut("update")]
+    public async Task<IActionResult> CreateSportComplex([FromBody] SportComplexUpdateDto updateDto,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sportComplexesService.UpdateSportComplex(updateDto, cancellationToken);
+        return Ok(result);
     }
     
 }

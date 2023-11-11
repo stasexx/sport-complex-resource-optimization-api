@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
@@ -42,6 +43,18 @@ public class SportComplexesService : ISportComplexesService
         };
 
         return result;
+    }
+
+    public async Task<SportComplexDto> UpdateSportComplex(SportComplexUpdateDto sportComplex,
+        CancellationToken cancellationToken)
+    {
+        var complex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplex.Id), cancellationToken);
+
+        this._mapper.Map(sportComplex, complex);
+        
+        var result = await _sportComplexesRepository.UpdateSportComplexAsync(complex, cancellationToken);
+        
+        return _mapper.Map<SportComplexDto>(result);
     }
 
 }
