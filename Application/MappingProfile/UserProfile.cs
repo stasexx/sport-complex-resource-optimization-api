@@ -1,9 +1,7 @@
 using AutoMapper;
-using SportComplexResourceOptimizationApi.Application.Models;
 using SportComplexResourceOptimizationApi.Application.Models.Dtos;
 using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 using SportComplexResourceOptimizationApi.Domain.Entities;
-using SportComplexResourceOptimizationApi.Entities;
 
 namespace SportComplexResourceOptimizationApi.Application.MappingProfile;
 

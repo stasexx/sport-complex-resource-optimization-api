@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Domain.Common;
 
-namespace SportComplexResourceOptimizationApi.Application.IRepository;
+namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IBaseRepository<TEntity> where TEntity : EntityBase
 {
@@ -23,4 +23,6 @@ public interface IBaseRepository<TEntity> where TEntity : EntityBase
     Task<int> GetCountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 
     Task<TEntity> DeleteAsync(TEntity entity, CancellationToken cancellationToken);
+
+    Task<TEntity> DeleteFromDbAsync(TEntity entity, CancellationToken cancellationToken);
 }

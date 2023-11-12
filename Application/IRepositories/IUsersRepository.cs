@@ -1,8 +1,7 @@
-using MongoDB.Bson;
-using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
+using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
-namespace SportComplexResourceOptimizationApi.Application.IRepository;
+namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IUsersRepository : IBaseRepository<User>
 {

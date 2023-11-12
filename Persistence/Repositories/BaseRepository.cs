@@ -1,9 +1,9 @@
 using SportComplexResourceOptimizationApi.Domain.Common;
-using SportComplexResourceOptimizationApi.Application.IRepository;
 using System.Linq.Expressions;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using Persistence.Database;
+using SportComplexResourceOptimizationApi.Application.IRepositories;
 
 namespace SportComplexResourceOptimizationApi.Persistence.Repositories;
 
@@ -80,6 +80,14 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
 
         return await this._collection.FindOneAndUpdateAsync(
             Builders<TEntity>.Filter.Eq(e => e.Id, entity.Id), updateDefinition, options, cancellationToken);
+    }
+
+    public async Task<TEntity> DeleteFromDbAsync(TEntity entity, CancellationToken cancellationToken)
+    {
+        var filter = Builders<TEntity>.Filter.Eq("_id", entity.Id);
+        var result = await _collection.DeleteOneAsync(filter, cancellationToken);
+        
+        return result.DeletedCount > 0 ? entity : null;
     }
 
 }

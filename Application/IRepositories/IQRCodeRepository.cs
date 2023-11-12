@@ -1,8 +1,7 @@
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Domain.Entities.Identity;
-using SportComplexResourceOptimizationApi.Entities;
 
-namespace SportComplexResourceOptimizationApi.Application.IRepository;
+namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IQRCodeRepository : IBaseRepository<QRCodeData>
 {

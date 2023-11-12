@@ -1,6 +1,6 @@
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
-namespace SportComplexResourceOptimizationApi.Application.IRepository;
+namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IRolesRepository : IBaseRepository<Role>
 {

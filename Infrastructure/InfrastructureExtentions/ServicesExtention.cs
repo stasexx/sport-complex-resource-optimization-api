@@ -7,19 +7,34 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
+using Amazon.S3;
+using SportComplexResourceOptimizationApi.Application.IServices.Amazon;
+using SportComplexResourceOptimizationApi.Infrastructure.Services.AmazonService;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExtentions;
 
 public static class ServicesExtention
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    
+    public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
+        
         services.AddScoped<IUserService, UsersService>();
         services.AddScoped<ITokensService, TokensService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ISportComplexesService, SportComplexesService>();
+        services.AddScoped<IStorageService, StorageService>();
+        services.AddScoped<IServiceService, ServicesService>();
+        services.AddScoped<IEquipmentService, EquipmentsService>();
+        services.AddScoped<IReservationService, ReservationService>();
+        services.AddScoped<IQRCodeService, QRCodeService>();
+        services.AddScoped<IServiceSubscriptionService, ServiceSubscriptionsService>();
+        services.AddScoped<IAbonnementService, AbonnementsService>();
+        services.AddScoped<ISensorService, SensorsService>();
 
         return services;
     }
+
 
     public static IServiceCollection AddJWTTokenAuthentication(this IServiceCollection services, IConfiguration configuration)
     {

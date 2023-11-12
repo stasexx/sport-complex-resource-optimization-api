@@ -1,9 +1,8 @@
+using System.Data;
 using System.Security.Claims;
 using AutoMapper;
 using MongoDB.Bson;
-using SportComplexResourceOptimizationApi.Application.GlobalInstances;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
-using SportComplexResourceOptimizationApi.Application.IRepository;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
@@ -64,7 +63,7 @@ public class UsersService : IUserService
         return _mapper.Map<UserDto>(entity);
     }
 
-    public async Task AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken)
+    public async Task<UserDto> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken)
     {
         var userDto = new UserDto 
         { 
@@ -78,6 +77,7 @@ public class UsersService : IUserService
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
+            Roles = new List<Role>{role},
             Phone = dto.Phone,
             PasswordHash = this._passwordHasher.Hash(dto.Password),
             CreatedDateUtc = DateTime.UtcNow,
@@ -86,6 +86,8 @@ public class UsersService : IUserService
 
         await _usersRepository.AddAsync(user, cancellationToken);
         var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
+
+        return _mapper.Map<UserDto>(user);
     }
 
     public async Task<TokensModel> LoginAsync(LoginUserDto login, CancellationToken cancellationToken)
@@ -147,6 +149,56 @@ public class UsersService : IUserService
             Tokens = tokens, 
             User = updatedUserDto
         };
+    }
+
+    public async Task<UserDto> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
+    {
+        var role = await _rolesRepository.GetOneAsync(r => r.Name == roleName, cancellationToken);
+
+        if (role==null)
+        {
+            throw new ArgumentNullException($"{roleName} is not found");
+        }
+
+        var userObjectId = ObjectId.Parse(userId);
+        var user = await _usersRepository.GetOneAsync(userObjectId, cancellationToken);
+
+        if (user == null)
+        {
+            throw new ArgumentNullException("User");
+        }
+        
+        user.Roles.Add(role);
+        var updateUser = await this._usersRepository.UpdateUserAsync(user, cancellationToken);
+        var userDto = this._mapper.Map<UserDto>(updateUser);
+
+        return userDto;
+    }
+    
+    public async Task<UserDto> RemoveFromRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
+    {
+        var role = await _rolesRepository.GetOneAsync(r => r.Name == roleName, cancellationToken);
+
+        if (role==null)
+        {
+            throw new ArgumentNullException($"{roleName} is not found");
+        }
+
+        var userObjectId = ObjectId.Parse(userId);
+        var user = await _usersRepository.GetOneAsync(userObjectId, cancellationToken);
+
+        if (user == null)
+        {
+            throw new ArgumentNullException("User");
+        }
+
+        var deletedRole = user.Roles.Find(r => r.Name == role.Name);
+        user.Roles.Remove(deletedRole);
+        
+        var updateUser = await this._usersRepository.UpdateUserAsync(user, cancellationToken);
+        var userDto = this._mapper.Map<UserDto>(updateUser);
+
+        return userDto;
     }
 
     private TokensModel GetUserTokens(User user, RefreshToken refreshToken)
