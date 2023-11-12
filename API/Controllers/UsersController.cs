@@ -56,5 +56,21 @@ public class UserController : BaseController
         var users = await _userService.GetUsersPageAsync(pageNumber, pageSize, cancellationToken);
         return Ok(users);
     }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{userId}/roles/{roleName}")]
+    public async Task<ActionResult<PagedList<UserDto>>> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
+    {
+        var users = await _userService.AddToRoleAsync(userId, roleName, cancellationToken);
+        return Ok(users);
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{userId}/roles/{roleName}")]
+    public async Task<ActionResult<PagedList<UserDto>>> RemoveFromeRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
+    {
+        var users = await _userService.RemoveFromRoleAsync(userId, roleName, cancellationToken);
+        return Ok(users);
+    }
 
 }

@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+﻿using Application.Models.Dtos;
+using AutoMapper;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
@@ -19,16 +21,70 @@ public class ServicesService : IServiceService
         _mapper = mapper;
     }
 
-    public async Task<ServiceCreateDto> CreateService(ServiceCreateDto dto, string complexId,
+    public async Task<ServiceCreateDto> CreateService(ServiceCreateDto dto, string userId,
         CancellationToken cancellationToken)
     {
         var service = new Service()
         {
             Name = dto.Name,
-            CreatedById = ObjectId.Parse(complexId),
+            SportComplexId = ObjectId.Parse(dto.SportComplexId),
+            CreatedById = ObjectId.Parse(userId),
             CreatedDateUtc = DateTime.UtcNow
         };
         await _servicesRepository.AddAsync(service, cancellationToken);
         return dto;
+    }
+
+    public async Task<ServiceDto> UpdateService(ServiceUpdateDto service, CancellationToken cancellationToken)
+    {
+        var serv = await _servicesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(service.Id), cancellationToken);
+
+        this._mapper.Map(service, serv);
+        
+        var result = await _servicesRepository.UpdateServiceAsync(serv, cancellationToken);
+        
+        return _mapper.Map<ServiceDto>(result);
+    }
+    
+    public async Task<ServiceDto> DeleteService(string serviceId, CancellationToken cancellationToken)
+    {
+        var service = await _servicesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(serviceId), cancellationToken);
+
+        if (service == null)
+        {
+            throw new Exception("Service was not found!");
+        }
+
+        await _servicesRepository.DeleteFromDbAsync(service, cancellationToken);
+
+        return _mapper.Map<ServiceDto>(service);
+    }
+
+    public async Task<ServiceDto> HideService(string serviceId, CancellationToken cancellationToken)
+    {
+        var service = await _servicesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(serviceId), cancellationToken);
+
+        if (service == null)
+        {
+            throw new Exception("Service was not found!");
+        }
+
+        await _servicesRepository.DeleteAsync(service, cancellationToken);
+
+        return _mapper.Map<ServiceDto>(service);
+    }
+    
+    public async Task<ServiceDto> RevealService(string serviceId, CancellationToken cancellationToken)
+    {
+        var service = await _servicesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(serviceId), cancellationToken);
+
+        if (service == null)
+        {
+            throw new Exception("Service was not found!");
+        }
+
+        await _servicesRepository.RevealServiceAsync(service, cancellationToken);
+
+        return _mapper.Map<ServiceDto>(service);
     }
 }

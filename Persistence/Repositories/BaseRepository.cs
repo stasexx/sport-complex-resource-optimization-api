@@ -82,4 +82,12 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
             Builders<TEntity>.Filter.Eq(e => e.Id, entity.Id), updateDefinition, options, cancellationToken);
     }
 
+    public async Task<TEntity> DeleteFromDbAsync(TEntity entity, CancellationToken cancellationToken)
+    {
+        var filter = Builders<TEntity>.Filter.Eq("_id", entity.Id);
+        var result = await _collection.DeleteOneAsync(filter, cancellationToken);
+        
+        return result.DeletedCount > 0 ? entity : null;
+    }
+
 }

@@ -2,11 +2,13 @@ using Application.Models.Dtos;
 using AutoMapper;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
+using SportComplexResourceOptimizationApi.Application.Paging;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
@@ -55,6 +57,65 @@ public class SportComplexesService : ISportComplexesService
         var result = await _sportComplexesRepository.UpdateSportComplexAsync(complex, cancellationToken);
         
         return _mapper.Map<SportComplexDto>(result);
+    }
+
+    public async Task<SportComplexDto> DeleteSportComplex(string sportComplexId, CancellationToken cancellationToken)
+    {
+        var complex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplexId), cancellationToken);
+
+        if (complex == null)
+        {
+            throw new Exception("Complex was not found!");
+        }
+
+        await _sportComplexesRepository.DeleteFromDbAsync(complex, cancellationToken);
+
+        return _mapper.Map<SportComplexDto>(complex);
+    }
+
+    public async Task<SportComplexDto> HideSportComplex(string sportComplexId, CancellationToken cancellationToken)
+    {
+        var complex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplexId), cancellationToken);
+
+        if (complex == null)
+        {
+            throw new Exception("Complex was not found!");
+        }
+
+        await _sportComplexesRepository.DeleteAsync(complex, cancellationToken);
+
+        return _mapper.Map<SportComplexDto>(complex);
+    }
+    
+    public async Task<SportComplexDto> RevealSportComplex(string sportComplexId, CancellationToken cancellationToken)
+    {
+        var sportComplex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplexId), cancellationToken);
+
+        if (sportComplex == null)
+        {
+            throw new Exception("Service was not found!");
+        }
+
+        await _sportComplexesRepository.RevealSportComplexAsync(sportComplex, cancellationToken);
+
+        return _mapper.Map<SportComplexDto>(sportComplex);
+    }
+    
+    public async Task<PagedList<SportComplexDto>> GetSportComplexesPages(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        var entities = await _sportComplexesRepository.GetPageAsync(pageNumber, pageSize, cancellationToken);
+        var dtos = _mapper.Map<List<SportComplexDto>>(entities);
+        var count = await _sportComplexesRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<SportComplexDto>(dtos, pageNumber, pageSize, count);
+    }
+
+    public async Task<PagedList<SportComplexDto>> GetVisibleSportComplexesPages(int pageNumber, int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var entities = await _sportComplexesRepository.GetPageAsync(pageNumber, pageSize, x=> x.IsDeleted==false, cancellationToken);
+        var dtos = _mapper.Map<List<SportComplexDto>>(entities);
+        var count = await _sportComplexesRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<SportComplexDto>(dtos, pageNumber, pageSize, count);
     }
 
 }

@@ -33,5 +33,21 @@ public class SportComplexesRepository : BaseRepository<SportComplex>, ISportComp
             options, 
             cancellationToken);
     }
+    
+    public async Task<SportComplex> RevealSportComplexAsync(SportComplex sportComplex, CancellationToken cancellationToken)
+    {
+        var updateDefinition = MongoDB.Driver.Builders<SportComplex>.Update
+            .Set(c => c.IsDeleted, false);
+        
 
+        var options = new MongoDB.Driver.FindOneAndUpdateOptions<SportComplex>
+        {
+            ReturnDocument = ReturnDocument.After
+        };
+
+        return await this._collection.FindOneAndUpdateAsync(MongoDB.Driver.Builders<SportComplex>.Filter.Eq(u => u.Id, sportComplex.Id), 
+            updateDefinition, 
+            options, 
+            cancellationToken);
+    }
 }
