@@ -41,3 +41,5 @@ await initializer.InitialaizeDb(CancellationToken.None);
 */
 
 app.Run();
+
+public partial class Program { }
