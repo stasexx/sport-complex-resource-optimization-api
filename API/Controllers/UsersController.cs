@@ -22,8 +22,8 @@ public class UserController : BaseController
     [HttpPost("register")]
     public async Task<ActionResult> RegisterAsync([FromBody] UserCreateDto register, CancellationToken cancellationToken)
     {
-        await _userService.AddUserAsync(register, cancellationToken);
-        return Ok();
+        var result = await _userService.AddUserAsync(register, cancellationToken);
+        return Ok(result);
     }
 
     [HttpPost("login")]

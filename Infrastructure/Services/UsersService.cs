@@ -63,7 +63,7 @@ public class UsersService : IUserService
         return _mapper.Map<UserDto>(entity);
     }
 
-    public async Task<UserDto> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken)
+    public async Task<TokensModel> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken)
     {
         var userDto = new UserDto 
         { 
@@ -86,9 +86,11 @@ public class UsersService : IUserService
 
         await _usersRepository.AddAsync(user, cancellationToken);
         var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
+        var tokens = GetUserTokens(user, refreshToken);
 
-        return _mapper.Map<UserDto>(user);
+        return tokens;
     }
+    
 
     public async Task<TokensModel> LoginAsync(LoginUserDto login, CancellationToken cancellationToken)
     {

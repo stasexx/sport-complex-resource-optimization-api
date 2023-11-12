@@ -8,7 +8,7 @@ namespace SportComplexResourceOptimizationApi.Application.IServices;
 
 public interface IUserService
 {
-    Task<UserDto> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken);
+    Task<TokensModel> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken);
 
     Task<UserDto> GetUserAsync(string id, CancellationToken cancellationToken);
 

@@ -32,4 +32,27 @@ public class UsersTests : TestsBase
         Assert.NotNull(tokens.AccessToken);
         Assert.NotNull(tokens.RefreshToken);
     }
+    
+    [Fact]
+    public async Task LoginAsync_ValidInput_ReturnsTokens()
+    {
+        // Arrange
+        var login = new LoginUserDto()
+        {
+            Email = "test@gmail.com",
+            Password = "Yuiop12345"
+        };
+
+        // Act
+        var response = await HttpClient.PostAsJsonAsync($"{ResourceUrl}/login", login);
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Response Content: {content}");
+        var tokens = await response.Content.ReadFromJsonAsync<TokensModel>();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(tokens);
+        Assert.NotNull(tokens.AccessToken);
+        Assert.NotNull(tokens.RefreshToken);
+    }
 }
