@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
+using SportComplexResourceOptimizationApi.Application.Paging;
 using SportComplexResourceOptimizationApi.Persistence.Repositories;
 
 namespace SportComplexResourceOptimization.Api.Controllers;
@@ -50,6 +51,24 @@ public class ServicesController : BaseController
     public async Task<IActionResult> RevealService(string serviceId, CancellationToken cancellationToken)
     {
         var result = await _serviceService.RevealService(serviceId, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("visible/{sportComplexId}")]
+    public async Task<ActionResult<PagedList<ServiceDto>>> GetVisibleServicePages(int pageNumber, int pageSize,
+        string sportComplexId, CancellationToken cancellationToken)
+    {
+        var result = await _serviceService.GetVisibleServicePages(pageNumber, pageSize, sportComplexId,
+            cancellationToken);
+        return Ok(result);
+    }
+    
+    [HttpGet("all/{sportComplexId}")]
+    public async Task<ActionResult<PagedList<ServiceDto>>> GetServicePages(int pageNumber, int pageSize,
+        string sportComplexId, CancellationToken cancellationToken)
+    {
+        var result = await _serviceService.GetServicePages(pageNumber, pageSize, sportComplexId,
+            cancellationToken);
         return Ok(result);
     }
     

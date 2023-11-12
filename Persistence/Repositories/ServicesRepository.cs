@@ -1,4 +1,5 @@
-﻿using Persistence.Database;
+﻿using MongoDB.Bson;
+using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 using ReturnDocument = MongoDB.Driver.ReturnDocument;
@@ -26,7 +27,7 @@ public class ServicesRepository : BaseRepository<Service>, IServicesRepository
             cancellationToken);
     }
     
-    public async Task<Service> RevealServiceAsync(Service service, CancellationToken cancellationToken)
+    public async Task<Service> RevealServiceAsync(string serviceId, CancellationToken cancellationToken)
     {
         var updateDefinition = MongoDB.Driver.Builders<Service>.Update
             .Set(c => c.IsDeleted, false);
@@ -37,7 +38,8 @@ public class ServicesRepository : BaseRepository<Service>, IServicesRepository
             ReturnDocument = ReturnDocument.After
         };
 
-        return await this._collection.FindOneAndUpdateAsync(MongoDB.Driver.Builders<Service>.Filter.Eq(u => u.Id, service.Id), 
+        return await this._collection.FindOneAndUpdateAsync(MongoDB.Driver.Builders<Service>.Filter.Eq(u => u.Id, 
+                ObjectId.Parse(serviceId)), 
             updateDefinition, 
             options, 
             cancellationToken);

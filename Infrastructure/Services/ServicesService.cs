@@ -5,6 +5,7 @@ using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
+using SportComplexResourceOptimizationApi.Application.Paging;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.Services;
@@ -83,8 +84,28 @@ public class ServicesService : IServiceService
             throw new Exception("Service was not found!");
         }
 
-        await _servicesRepository.RevealServiceAsync(service, cancellationToken);
+        await _servicesRepository.RevealServiceAsync(serviceId, cancellationToken);
 
         return _mapper.Map<ServiceDto>(service);
+    }
+    
+    public async Task<PagedList<ServiceDto>> GetServicePages(int pageNumber, int pageSize, string sportComplexId,
+        CancellationToken cancellationToken)
+    {
+        var entities = await _servicesRepository.GetPageAsync(pageNumber, pageSize,
+            x=> x.SportComplexId==ObjectId.Parse(sportComplexId), cancellationToken);
+        var dtos = _mapper.Map<List<ServiceDto>>(entities);
+        var count = await _servicesRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<ServiceDto>(dtos, pageNumber, pageSize, count);
+    }
+
+    public async Task<PagedList<ServiceDto>> GetVisibleServicePages(int pageNumber, int pageSize, string sportComplexId,
+        CancellationToken cancellationToken)
+    {
+        var entities = await _servicesRepository.GetPageAsync(pageNumber, pageSize, x=> x.IsDeleted==false
+            && x.SportComplexId == ObjectId.Parse(sportComplexId), cancellationToken);
+        var dtos = _mapper.Map<List<ServiceDto>>(entities);
+        var count = await _servicesRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<ServiceDto>(dtos, pageNumber, pageSize, count);
     }
 }

@@ -12,6 +12,7 @@ public static class MapperExtension
         services.AddAutoMapper(Assembly.GetAssembly(typeof(RoleProfile)));
         services.AddAutoMapper(Assembly.GetAssembly(typeof(ServiceProfile)));
         services.AddAutoMapper(Assembly.GetAssembly(typeof(SportComplexProfile)));
+        services.AddAutoMapper(Assembly.GetAssembly(typeof(AbonnementProfile)));
 
         return services;
     }

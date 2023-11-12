@@ -11,4 +11,5 @@ public class Abonnement : EntityBase
 
     public int Duration { get; set; }
     
+    public ObjectId ServiceId { get; set; }
 }
