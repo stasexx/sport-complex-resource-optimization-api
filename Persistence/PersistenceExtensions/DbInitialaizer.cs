@@ -36,6 +36,11 @@ public class DbInitialaizer
             new Role
             {
                 Name = "Admin"
+            },
+            
+            new Role
+            {
+                Name = "Owner"
             }
         };
 
@@ -50,7 +55,6 @@ public class DbInitialaizer
             new User
             {
                 Id = ObjectId.Parse("6533bb29c8c22b038c71cf46"),
-                GuestId = Guid.NewGuid(),
                 CreatedById = ObjectId.Parse("6533bb29c8c22b038c71cf46"),
                 CreatedDateUtc = DateTime.UtcNow,
                 LastModifiedById = ObjectId.Parse("6533bb29c8c22b038c71cf46"),
@@ -61,7 +65,6 @@ public class DbInitialaizer
             new User
             {
                 Id = ObjectId.Parse("6533bde5755745116be42ce7"),
-                GuestId = Guid.NewGuid(),
                 Phone = "+380953326869",
                 Email = "mykhailo.bilodid@nure.ua",
                 PasswordHash = "Yuiop12345",
@@ -75,7 +78,6 @@ public class DbInitialaizer
             new User
             {
                 Id = ObjectId.Parse("6533bded80fbc6e96250575b"),
-                GuestId = Guid.NewGuid(),
                 Phone = "+380953826869",
                 Email = "shopping.assistant.team@gmail.com",
                 PasswordHash = "Yuiop12345",

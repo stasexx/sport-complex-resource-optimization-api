@@ -75,7 +75,7 @@ public class S3Controller : BaseController
     }
     
     [HttpPost("/replace/{id}", Name = "ReplaceImage")]
-    public async Task<IActionResult> ReplaceImage(IFormFile newFile, string oldImageName, string id)
+    public async Task<IActionResult> ReplaceImage(IFormFile newFile, string oldImageName, string bucketType, string id)
     {
         await using var memoryStream = new MemoryStream();
         await newFile.CopyToAsync(memoryStream);
@@ -84,7 +84,7 @@ public class S3Controller : BaseController
 
         var newS3Object = new S3Object()
         {
-            BucketName = _config["AmazonS3Config:Bucket"],
+            BucketName = _config[$"AmazonS3Config:{bucketType}Bucket"],
             InputStream = memoryStream,
             Name = newObjectName
         };
@@ -93,7 +93,7 @@ public class S3Controller : BaseController
         {
             AccessKey = _config["AmazonS3Config:AccessKey"],
             SecretKey = _config["AmazonS3Config:SecretKey"],
-            BucketName = _config["AmazonS3Config:Bucket"]
+            BucketName = _config[$"AmazonS3Config:{bucketType}Bucket"]
         };
         
         var deleteResult = await _storageService.DeleteImageAsync(oldImageName, cred);
@@ -116,14 +116,14 @@ public class S3Controller : BaseController
     }
     
     [HttpDelete("DeleteImage")]
-    public async Task<IActionResult> DeleteImage(string imageName)
+    public async Task<IActionResult> DeleteImage(string imageName, string bucketType)
     {
 
         var cred = new AmazonCredentials()
         {
             AccessKey = _config["AmazonS3Config:AccessKey"],
             SecretKey = _config["AmazonS3Config:SecretKey"],
-            BucketName = _config["AmazonS3Config:Bucket"]
+            BucketName = _config[$"AmazonS3Config:{bucketType}Bucket"]
         };
 
         var result = await _storageService.DeleteImageAsync(imageName, cred);

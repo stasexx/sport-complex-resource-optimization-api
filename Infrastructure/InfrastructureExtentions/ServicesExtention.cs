@@ -30,6 +30,7 @@ public static class ServicesExtention
         services.AddScoped<IQRCodeService, QRCodeService>();
         services.AddScoped<IServiceSubscriptionService, ServiceSubscriptionsService>();
         services.AddScoped<IAbonnementService, AbonnementsService>();
+        services.AddScoped<ISensorService, SensorsService>();
 
         return services;
     }

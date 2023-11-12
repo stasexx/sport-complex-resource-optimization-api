@@ -4,5 +4,7 @@ namespace SportComplexResourceOptimizationApi.Application.IRepositories;
 
 public interface IEquipmentsRepository : IBaseRepository<Equipment>
 {
-    
+    Task<Equipment> RevealEquipmentAsync(string equipmentId, CancellationToken cancellationToken);
+
+    Task<Equipment> UpdateEquipmentAsync(Equipment equipment, CancellationToken cancellationToken);
 }

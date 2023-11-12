@@ -21,6 +21,7 @@ public static class RepositoryExtansion
         services.AddScoped<IReservationsRepository, ReservationsRepository>();
         services.AddScoped<IServiceSubscriptionsRepository, ServiceSubscriptionRepository>();
         services.AddScoped<IAbonnementsRepository, AbonnementRepository>();
+        services.AddScoped<ISensorsRepository, SensorsRepository>();
 
         return services;
     }
