@@ -1,4 +1,6 @@
-﻿namespace SportComplexResourceOptimizationApi.Application.Models.CreateDto;
+﻿using MongoDB.Bson;
+
+namespace SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 
 public class SportComplexCreateDto
 {
@@ -6,5 +8,8 @@ public class SportComplexCreateDto
     
     public string Email { get; set; }
     
+    public string City { get; set; }
+    
     public string Address { get; set; }
+    
 }

@@ -40,6 +40,7 @@ public class SportComplexesService : ISportComplexesService
             Name = complex.Name,
             Address = complex.Address,
             Email = complex.Email,
+            City = complex.City,
             Rating = complex.Rating,
             Description = complex.Description
         };

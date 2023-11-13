@@ -1,3 +1,4 @@
+using Application.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
@@ -17,13 +18,13 @@ public class SportComplexesController : BaseController
     {
         _sportComplexesService = sportComplexesService;
     }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
+    
+    [HttpPost("create/{ownerId}")]
+    public async Task<ActionResult<SportComplexDto>> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
         CancellationToken cancellationToken)
     {
-        await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
-        return Ok();
+        var result = await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
+        return Ok(result);
     }
     
     [Authorize(Roles = "Admin, Owner")]
