@@ -55,11 +55,11 @@ public class DbInitializer
 
         var testUser = new User
         {
-            Id = ObjectId.Parse("652c3b89ae02a3135d6409fc"),
-            Email = "test@gmail.com",
-            Phone = "+380123456789",
+            Id = ObjectId.Parse("652c3b89ae02a3135d5409fc"),
+            Email = "someone@gmail.com",
+            Phone = "+380451346782",
             Roles = new List<Role> { userRole },
-            PasswordHash = passwordHasher.Hash("Yuiop12345"),
+            PasswordHash = passwordHasher.Hash("qwerty1234"),
             CreatedById = ObjectId.Empty,
             CreatedDateUtc = DateTime.UtcNow
         };
@@ -68,10 +68,10 @@ public class DbInitializer
         var updateTestUser = new User
         {
             Id = ObjectId.Parse("652c3b89ae02a3135d6309fc"),
-            Email = "update@gmail.com",
+            Email = "someoneForUpdate@gmail.com",
             Phone = "+380123446789",
             Roles = new List<Role> { userRole },
-            PasswordHash = passwordHasher.Hash("Yuiop12345"),
+            PasswordHash = passwordHasher.Hash("update12345"),
             CreatedById = ObjectId.Empty,
             CreatedDateUtc = DateTime.UtcNow
         };

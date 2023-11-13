@@ -1,5 +1,7 @@
 using System.Data;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
+using Application.Exceptions;
 using AutoMapper;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
@@ -70,6 +72,8 @@ public class UsersService : IUserService
             Email = dto.Email, 
             Phone = dto.Phone
         };
+        
+        await ValidateUserAsync(userDto, new User(), cancellationToken);
 
         var role = await _rolesRepository.GetOneAsync(r => r.Name == "User", cancellationToken);
         var user = new User
@@ -122,29 +126,28 @@ public class UsersService : IUserService
         {
             throw new Exception("User");
         }
-
-        // TODO: Cleanup
-        var userValidationDto = new UserDto 
+        
+        var userDtoForValidate = new UserDto 
         { 
             Email = userDto.Email, 
             Phone = userDto.Phone
         };
+        
+        await ValidateUserAsync(userDtoForValidate, new User(), cancellationToken);
 
         this._mapper.Map(userDto, user);
         if (!string.IsNullOrEmpty(userDto.Password))
         {
             user.PasswordHash = this._passwordHasher.Hash(userDto.Password);
         }
-
-        //await CheckAndUpgradeToUserAsync(user, cancellationToken);
-
+        
         var updatedUser = await this._usersRepository.UpdateUserAsync(user, cancellationToken);
 
         var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
 
         var tokens = this.GetUserTokens(user, refreshToken);
 
-        var updatedUserDto = this._mapper.Map<UserDto>(updatedUser);
+        var updatedUserDto = this._mapper.Map<UserUpdateDto>(updatedUser);
 
         return new UpdateUserModel() 
         { 
@@ -240,5 +243,48 @@ public class UsersService : IUserService
         await this._refreshTokensRepository.AddAsync(refreshToken, cancellationToken);
 
         return refreshToken;
+    }
+    
+    private async void ValidateEmail(string email)
+    {
+        string regex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
+        if (!Regex.IsMatch(email, regex))
+        {
+            throw new InvalidEmailException(email);
+        }
+    }
+
+    private void ValidatePhone(string phone)
+    {
+        string regex = @"^\+[0-9]{1,15}$";
+
+        if (!Regex.IsMatch(phone, regex))
+        {
+            throw new InvalidPhoneNumberException(phone);
+        }
+    }
+    
+    private async Task ValidateUserAsync(UserDto userDto, User user, CancellationToken cancellationToken)
+    {
+        if (!string.IsNullOrEmpty(userDto.Email)) 
+        {
+            ValidateEmail(userDto.Email);
+            if (userDto.Email != user.Email 
+                && await this._usersRepository.ExistsAsync(x => x.Email == userDto.Email, cancellationToken))
+            {
+                throw new EntityAlreadyExistsException("User", "Email", userDto.Email);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(userDto.Phone)) 
+        {
+            ValidatePhone(userDto.Phone);
+            if (userDto.Phone != user.Phone 
+                && await this._usersRepository.ExistsAsync(x => x.Phone == userDto.Phone, cancellationToken))
+            {
+                throw new EntityAlreadyExistsException("User", "Phone", userDto.Phone);
+            }
+        }
     }
 }
