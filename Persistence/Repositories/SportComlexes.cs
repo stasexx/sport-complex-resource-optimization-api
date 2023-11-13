@@ -18,6 +18,7 @@ public class SportComplexesRepository : BaseRepository<SportComplex>, ISportComp
             .Set(c => c.Description, sportComplex.Description)
             .Set(c => c.Email, sportComplex.Email)
             .Set(c => c.Rating, sportComplex.Rating)
+            .Set(c=>c.City, sportComplex.City)
             .Set(u => u.LastModifiedDateUtc, sportComplex.LastModifiedDateUtc)
             .Set(u => u.LastModifiedById, sportComplex.LastModifiedById);
         

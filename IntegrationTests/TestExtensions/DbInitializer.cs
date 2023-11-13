@@ -20,6 +20,7 @@ public class DbInitializer
     {
         _dbContext.Client.DropDatabase(_dbContext.Db.DatabaseNamespace.DatabaseName);
         InitializeUsersAsync().Wait();
+        InitializeSportComplexesAsync().Wait();
     }
     
     public async Task InitializeUsersAsync()
@@ -82,7 +83,7 @@ public class DbInitializer
             Id = ObjectId.Parse("652c3b89ae02a3135d6519fc"),
             Email = "ownerAdrenaline@gmail.com",
             Phone = "+380123456689",
-            Roles = new List<Role> { userRole, ownerRole },
+            Roles = new List<Role> { ownerRole },
             PasswordHash = passwordHasher.Hash("adrenaline1234"),
             CreatedById = ObjectId.Empty,
             CreatedDateUtc = DateTime.UtcNow

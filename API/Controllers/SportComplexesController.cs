@@ -19,6 +19,7 @@ public class SportComplexesController : BaseController
         _sportComplexesService = sportComplexesService;
     }
     
+    [Authorize(Roles = "Admin, Owner")]
     [HttpPost("create/{ownerId}")]
     public async Task<ActionResult<SportComplexDto>> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
         CancellationToken cancellationToken)

@@ -135,19 +135,19 @@ public class UsersService : IUserService
         
         await ValidateUserAsync(userDtoForValidate, new User(), cancellationToken);
 
-        this._mapper.Map(userDto, user);
+        _mapper.Map(userDto, user);
         if (!string.IsNullOrEmpty(userDto.Password))
         {
-            user.PasswordHash = this._passwordHasher.Hash(userDto.Password);
+            user.PasswordHash = _passwordHasher.Hash(userDto.Password);
         }
         
-        var updatedUser = await this._usersRepository.UpdateUserAsync(user, cancellationToken);
+        var updatedUser = await _usersRepository.UpdateUserAsync(user, cancellationToken);
 
         var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
 
-        var tokens = this.GetUserTokens(user, refreshToken);
+        var tokens = GetUserTokens(user, refreshToken);
 
-        var updatedUserDto = this._mapper.Map<UserUpdateDto>(updatedUser);
+        var updatedUserDto = _mapper.Map<UserUpdateDto>(updatedUser);
 
         return new UpdateUserModel() 
         { 
@@ -200,16 +200,16 @@ public class UsersService : IUserService
         var deletedRole = user.Roles.Find(r => r.Name == role.Name);
         user.Roles.Remove(deletedRole);
         
-        var updateUser = await this._usersRepository.UpdateUserAsync(user, cancellationToken);
-        var userDto = this._mapper.Map<UserDto>(updateUser);
+        var updateUser = await _usersRepository.UpdateUserAsync(user, cancellationToken);
+        var userDto = _mapper.Map<UserDto>(updateUser);
 
         return userDto;
     }
 
     private TokensModel GetUserTokens(User user, RefreshToken refreshToken)
     {
-        var claims = this.GetClaims(user);
-        var accessToken = this._tokensService.GenerateAccessToken(claims);
+        var claims = GetClaims(user);
+        var accessToken = _tokensService.GenerateAccessToken(claims);
 
 
         return new TokensModel
@@ -227,6 +227,11 @@ public class UsersService : IUserService
             new (ClaimTypes.Email, user.Email ?? string.Empty),
             new (ClaimTypes.MobilePhone, user.Phone ?? string.Empty),
         };
+        
+        foreach (var role in user.Roles)
+        {
+            claims.Add(new (ClaimTypes.Role, role.Name));
+        }
 
         return claims;
     }
