@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Application.Models.Statistics;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
@@ -14,6 +15,13 @@ public class ReservationsRepository : BaseRepository<Reservation>, IReservations
     {
         return await this._collection
             .FindAsync(x => x.StartReservation.Hour >= dateTime1.Hour && x.StartReservation.Hour <= dateTime2.Hour).Result
+            .ToListAsync();
+    }
+    
+    public async Task<List<Reservation>> GetByDate(DateTime dateTime1, DateTime dateTime2)
+    {
+        return await this._collection
+            .FindAsync(x => x.StartReservation >= dateTime1 && x.StartReservation <= dateTime2).Result
             .ToListAsync();
     }
     
@@ -57,5 +65,18 @@ public class ReservationsRepository : BaseRepository<Reservation>, IReservations
         }
 
         return timeIntervals;
+    }
+    
+    public async Task<List<ReservationStatisticItem>> GetReservationStatisticsByHour()
+    {
+        var reservationsByHour = await _collection.Aggregate()
+            .Group(r => r.StartReservation.Hour, group => new ReservationStatisticItem
+            {
+                Hour = group.Key,
+                ReservationCount = group.Count()
+            })
+            .ToListAsync();
+
+        return reservationsByHour;
     }
 }

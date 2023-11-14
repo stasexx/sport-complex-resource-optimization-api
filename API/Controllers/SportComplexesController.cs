@@ -19,7 +19,6 @@ public class SportComplexesController : BaseController
         _sportComplexesService = sportComplexesService;
     }
     
-    [Authorize(Roles = "Admin, Owner")]
     [HttpPost("create/{ownerId}")]
     public async Task<ActionResult<SportComplexDto>> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
         CancellationToken cancellationToken)
@@ -75,6 +74,23 @@ public class SportComplexesController : BaseController
     {
         var result =
             await _sportComplexesService.GetSportComplexesPages(pageNumber, pageSize, cancellationToken);
+        return Ok(result);
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<SportComplexDto>> GetUserAsync(string id, CancellationToken cancellationToken)
+    {
+        var user = await _sportComplexesService.GetSportComplexAsync(id, cancellationToken);
+        return Ok(user);
+    }
+    
+    [HttpGet("search/{name}")]
+    public async Task<IActionResult> GetVisibleSportComplexesByNamePages(int pageNumber, int pageSize, string name,
+        CancellationToken cancellationToken)
+    {
+        var result =
+            await _sportComplexesService.GetVisibleSportComplexesByNamePages(pageNumber, pageSize,name, cancellationToken);
         return Ok(result);
     }
     

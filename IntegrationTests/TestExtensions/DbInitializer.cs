@@ -58,7 +58,6 @@ public class DbInitializer
         {
             Id = ObjectId.Parse("652c3b89ae02a3135d5409fc"),
             Email = "someone@gmail.com",
-            Phone = "+380451346782",
             Roles = new List<Role> { userRole },
             PasswordHash = passwordHasher.Hash("qwerty1234"),
             CreatedById = ObjectId.Empty,

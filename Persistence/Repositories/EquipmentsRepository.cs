@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Domain.Entities;
@@ -43,5 +44,11 @@ public class EquipmentsRepository : BaseRepository<Equipment>, IEquipmentsReposi
             updateDefinition, 
             options, 
             cancellationToken);
+    }
+    
+    public async Task<string> GetEquipmentNameById(ObjectId equipmentId)
+    {
+        var equipment = await _collection.Find(e => e.Id == equipmentId).FirstOrDefaultAsync();
+        return equipment?.Name;
     }
 }

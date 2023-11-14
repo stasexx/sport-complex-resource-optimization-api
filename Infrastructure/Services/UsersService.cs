@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Application.Exceptions;
