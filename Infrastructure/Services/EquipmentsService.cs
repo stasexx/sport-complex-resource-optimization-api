@@ -15,13 +15,16 @@ public class EquipmentsService : IEquipmentService
 
     private readonly ISensorsRepository _sensorsRepository;
 
+    private readonly IUsagesHistoryRepository _usagesHistoryRepository;
+
     private readonly IMapper _mapper;
 
     public EquipmentsService(IEquipmentsRepository equipmentRepository, ISensorsRepository sensorsRepository,
-        IMapper mapper)
+        IUsagesHistoryRepository usagesHistoryRepository, IMapper mapper)
     {
         _equipmentRepository = equipmentRepository;
         _sensorsRepository = sensorsRepository;
+        _usagesHistoryRepository = usagesHistoryRepository;
         _mapper = mapper;
     }
 
@@ -35,9 +38,17 @@ public class EquipmentsService : IEquipmentService
             CreatedById = ObjectId.Parse(userId),
             CreatedDateUtc = DateTime.UtcNow
         };
+        
+        var result = await _equipmentRepository.AddAsync(equipment, cancellationToken);
 
-        await _equipmentRepository.AddAsync(equipment, cancellationToken);
+        var history = new UsagesHistory()
+        {
+            EquipmentId = result.Id,
+            TotalUsages = 0
+        };
 
+        await _usagesHistoryRepository.AddAsync(history, cancellationToken);
+        
         return dto;
     }
     

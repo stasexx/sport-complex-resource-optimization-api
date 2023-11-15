@@ -11,9 +11,12 @@ public class SensorsService : ISensorService
 {
     private readonly ISensorsRepository _sensorsRepository;
 
-    public SensorsService(ISensorsRepository sensorsRepository)
+    private readonly IUsagesHistoryRepository _usagesHistoryRepository;
+
+    public SensorsService(ISensorsRepository sensorsRepository, IUsagesHistoryRepository usagesHistoryRepository)
     {
         _sensorsRepository = sensorsRepository;
+        _usagesHistoryRepository = usagesHistoryRepository;
     }
 
     public async Task<SensorCreateDto> CreateSensor(SensorCreateDto dto, CancellationToken cancellationToken)
@@ -31,8 +34,12 @@ public class SensorsService : ISensorService
 
     public async Task<SensorUpdateDto> UpdateStatus(SensorUpdateDto dto, CancellationToken cancellationToken)
     {
-        await _sensorsRepository.UpdateStatus(dto.Id, dto.Status, cancellationToken);
-
+        await _sensorsRepository.UpdateStatus(dto.EquipmentId, dto.Status, cancellationToken);
+        if (dto.Status)
+        {
+            await _usagesHistoryRepository.UpdateUsages(dto.EquipmentId);
+        }
+        
         return dto;
     }
 }

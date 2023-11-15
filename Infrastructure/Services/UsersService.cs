@@ -82,7 +82,7 @@ public class UsersService : IUserService
             Email = dto.Email,
             Roles = new List<Role>{role},
             Phone = dto.Phone,
-            PasswordHash = this._passwordHasher.Hash(dto.Password),
+            PasswordHash = _passwordHasher.Hash(dto.Password),
             CreatedDateUtc = DateTime.UtcNow,
             CreatedById = ObjectId.Empty
         };
@@ -102,17 +102,17 @@ public class UsersService : IUserService
 
         if (user == null)
         {
-            throw new Exception("User");
+            throw new Exception("User with this email was not found");
         }
 
-        if (!this._passwordHasher.Check(login.Password, user.PasswordHash))
+        if (!_passwordHasher.Check(login.Password, user.PasswordHash))
         {
             throw new InvalidDataException("Invalid password!");
         }
 
         var refreshToken = await AddRefreshToken(user.Id, cancellationToken);
 
-        var tokens = this.GetUserTokens(user, refreshToken);
+        var tokens = GetUserTokens(user, refreshToken);
 
         return tokens;
     }
@@ -120,10 +120,10 @@ public class UsersService : IUserService
     public async Task<UpdateUserModel> UpdateAsync(UserUpdateDto userDto, CancellationToken cancellationToken)
     {
 
-        var user = await this._usersRepository.GetOneAsync(x => x.Id == ObjectId.Parse(userDto.Id), cancellationToken);
+        var user = await _usersRepository.GetOneAsync(x => x.Id == ObjectId.Parse(userDto.Id), cancellationToken);
         if (user == null)
         {
-            throw new Exception("User");
+            throw new Exception("User with this id was not found");
         }
         
         var userDtoForValidate = new UserDto 

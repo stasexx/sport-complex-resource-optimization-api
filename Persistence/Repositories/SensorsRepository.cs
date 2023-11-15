@@ -24,7 +24,7 @@ public class SensorsRepository : BaseRepository<Sensor>, ISensorsRepository
     }
     public async Task<bool> UpdateStatus(string sensorId, bool newStatus, CancellationToken cancellationToken)
     {
-        var filter = MongoDB.Driver.Builders<Sensor>.Filter.Eq(x => x.Id, ObjectId.Parse(sensorId));
+        var filter = MongoDB.Driver.Builders<Sensor>.Filter.Eq(x => x.EquipmentId, ObjectId.Parse(sensorId));
         var update = MongoDB.Driver.Builders<Sensor>.Update.Set(x => x.Status, newStatus);
 
         var result = await _collection.UpdateOneAsync(filter, update);
