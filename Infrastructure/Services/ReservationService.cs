@@ -11,9 +11,13 @@ public class ReservationService : IReservationService
 {
     private IReservationsRepository _reservationsRepository;
 
-    public ReservationService(IReservationsRepository reservationsRepository)
+    private IEquipmentsSetsRepository _equipmentsSetsRepository;
+    
+
+    public ReservationService(IReservationsRepository reservationsRepository, IEquipmentsSetsRepository equipmentsSetsRepository)
     {
         _reservationsRepository = reservationsRepository;
+        _equipmentsSetsRepository = equipmentsSetsRepository;
     }
 
     public async Task<List<Reservation>> GetReservationByTime(DateTime dateTime1, DateTime dateTime2, string equipmentId)
@@ -39,5 +43,15 @@ public class ReservationService : IReservationService
     public async Task<List<string>> GetAvailableTimeSlots(DateTime startTime, DateTime endTime, int intervalInMinutes, string equipmentId)
     {
         return await _reservationsRepository.GetAvailableTimeSlots(startTime, endTime, intervalInMinutes, equipmentId);
+    }
+
+    public async Task<List<ReservationsListCreateDto>> GetAvailableTimeSlotsForEquipment(
+        DateTime dateTime1, DateTime dateTime2, int bookingInterval, string equipmentsSetId, CancellationToken cancellationToken)
+    {
+        var list = await _equipmentsSetsRepository.GetOneAsync(x => x.Id == ObjectId.Parse(equipmentsSetId), cancellationToken);
+        List<string> stringIds = list.EquipmentsIds.Select(id => id.ToString()).ToList();
+        
+        return await _reservationsRepository.GetAvailableTimeSlotsForEquipment(dateTime1, dateTime2, bookingInterval,
+            stringIds);
     }
 }

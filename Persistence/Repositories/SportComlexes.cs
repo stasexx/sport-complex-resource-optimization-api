@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence.Database;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
@@ -50,5 +51,15 @@ public class SportComplexesRepository : BaseRepository<SportComplex>, ISportComp
             updateDefinition, 
             options, 
             cancellationToken);
+    }
+
+    public async Task<double> UpdateRating(ObjectId sportComplexId, double rating, CancellationToken cancellationToken)
+    {
+        var updateFilter = Builders<SportComplex>.Filter.Eq(x => x.Id, sportComplexId);
+        var update = Builders<SportComplex>.Update.Set(x => x.Rating, rating);
+        
+        await _collection.UpdateOneAsync(updateFilter, update);
+
+        return rating;
     }
 }

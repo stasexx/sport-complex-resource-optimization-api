@@ -49,7 +49,7 @@ public class SportComplexesTests : TestsBase
     {
         // Arrange
         await LoginAsync("someone@gmail.com", "qwerty1234");
-        var ownerId = "652c3b89ae02a3135d6519fc";
+        var Id = "652c3b89ae02a3135d6519fc";
         var sportComplexCreateDto = new SportComplexCreateDto()
         {
             Name = "SuperGym",
@@ -59,7 +59,7 @@ public class SportComplexesTests : TestsBase
         };
         // Act
         
-        var response = await HttpClient.PostAsJsonAsync($"{ResourceUrl}/create/{ownerId}", sportComplexCreateDto);
+        var response = await HttpClient.PostAsJsonAsync($"{ResourceUrl}/create/{Id}", sportComplexCreateDto);
         
         // Assert
         

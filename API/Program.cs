@@ -40,12 +40,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-/*
-using var scope = app.Services.CreateScope();
+
+/*using var scope = app.Services.CreateScope();
 var serviceProvider = scope.ServiceProvider;
 var initializer = new DbInitialaizer(serviceProvider);
-await initializer.InitialaizeDb(CancellationToken.None);
-*/
+await initializer.InitialaizeDb(CancellationToken.None);*/
+
 
 app.Run();
 

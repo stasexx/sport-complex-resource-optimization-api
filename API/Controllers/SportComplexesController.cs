@@ -27,7 +27,6 @@ public class SportComplexesController : BaseController
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin, Owner")]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateSportComplex([FromBody] SportComplexUpdateDto updateDto,
         CancellationToken cancellationToken)
@@ -35,8 +34,7 @@ public class SportComplexesController : BaseController
         var result = await _sportComplexesService.UpdateSportComplex(updateDto, cancellationToken);
         return Ok(result);
     }
-
-    [Authorize(Roles = "Admin, Owner")]
+    
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteSportComplex(string sportComplexId, CancellationToken cancellationToken)
     {
@@ -67,7 +65,6 @@ public class SportComplexesController : BaseController
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpGet("all")]
     public async Task<IActionResult> GetSportComplexesPages(int pageNumber, int pageSize,
         CancellationToken cancellationToken)
@@ -77,7 +74,6 @@ public class SportComplexesController : BaseController
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<SportComplexDto>> GetUserAsync(string id, CancellationToken cancellationToken)
     {

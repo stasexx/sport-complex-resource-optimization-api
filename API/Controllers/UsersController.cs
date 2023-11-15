@@ -32,32 +32,28 @@ public class UserController : BaseController
         var tokens = await _userService.LoginAsync(login, cancellationToken);
         return Ok(tokens);
     }
-
-    [Authorize]
+    
     [HttpPut]
     public async Task<ActionResult<UpdateUserModel>> UpdateAsync([FromBody] UserUpdateDto userDto, CancellationToken cancellationToken)
     {
         var updatedUserModel = await _userService.UpdateAsync(userDto, cancellationToken);
         return Ok(updatedUserModel);
     }
-
-    [Authorize(Roles = "Admin")]
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUserAsync(string id, CancellationToken cancellationToken)
     {
         var user = await _userService.GetUserAsync(id, cancellationToken);
         return Ok(user);
     }
-
-    [Authorize(Roles = "Admin")]
+    
     [HttpGet]
     public async Task<ActionResult<PagedList<UserDto>>> GetUsersPageAsync([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
     {
         var users = await _userService.GetUsersPageAsync(pageNumber, pageSize, cancellationToken);
         return Ok(users);
     }
-    
-    [Authorize(Roles = "Admin")]
+
     [HttpPost("{userId}/roles/{roleName}")]
     public async Task<ActionResult<PagedList<UserDto>>> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
     {
@@ -65,7 +61,6 @@ public class UserController : BaseController
         return Ok(users);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{userId}/roles/{roleName}")]
     public async Task<ActionResult<PagedList<UserDto>>> RemoveFromeRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
     {

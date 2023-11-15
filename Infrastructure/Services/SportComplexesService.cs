@@ -53,8 +53,9 @@ public class SportComplexesService : ISportComplexesService
     {
         var complex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplex.Id), cancellationToken);
 
-        this._mapper.Map(sportComplex, complex);
-        
+        var updatedSportComplex = this._mapper.Map(sportComplex, complex);
+        updatedSportComplex.LastModifiedDateUtc = DateTime.UtcNow;
+        updatedSportComplex.LastModifiedById = complex.CreatedById;
         var result = await _sportComplexesRepository.UpdateSportComplexAsync(complex, cancellationToken);
         
         return _mapper.Map<SportComplexDto>(result);

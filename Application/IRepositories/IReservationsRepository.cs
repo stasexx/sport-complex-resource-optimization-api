@@ -1,4 +1,5 @@
 ﻿using Application.Models.Statistics;
+using SportComplexResourceOptimizationApi.Application.Models.CreateDto;
 using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Application.IRepositories;
@@ -13,4 +14,7 @@ public interface IReservationsRepository : IBaseRepository<Reservation>
         string equipmentId);
 
     Task<List<ReservationStatisticItem>> GetReservationStatisticsByHour();
+
+    Task<List<ReservationsListCreateDto>> GetAvailableTimeSlotsForEquipment(
+        DateTime dateTime1, DateTime dateTime2, int bookingInterval, List<string> equipmentIds);
 }

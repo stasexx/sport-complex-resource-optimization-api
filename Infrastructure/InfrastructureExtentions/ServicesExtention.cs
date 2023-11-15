@@ -34,6 +34,8 @@ public static class ServicesExtention
         services.AddScoped<IAbonnementService, AbonnementsService>();
         services.AddScoped<ISensorService, SensorsService>();
         services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<IFeedbackService, FeedbacksService>();
+        services.AddScoped<IEquipmentsSetsService, EquipmentsSetsService>();
 
         return services;
     }

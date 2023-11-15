@@ -12,4 +12,8 @@ public interface IReservationService
 
     Task<List<string>> GetAvailableTimeSlots(DateTime startTime, DateTime endTime, int intervalInMinutes, string equipmentId);
     
+    Task<List<ReservationsListCreateDto>> GetAvailableTimeSlotsForEquipment(
+        DateTime dateTime1, DateTime dateTime2, int bookingInterval, string equipmentsSetId,
+        CancellationToken cancellationToken);
+
 }
