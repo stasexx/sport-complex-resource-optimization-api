@@ -21,4 +21,6 @@ public interface IUserService
     Task<UserDto> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken);
 
     Task<UserDto> RemoveFromRoleAsync(string userId, string roleName, CancellationToken cancellationToken);
+
+    Task<TokensModel> RefreshAccessTokenAsync(TokensModel tokensModel, CancellationToken cancellationToken);
 }

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Application.Exceptions;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
@@ -155,6 +156,42 @@ public class UsersService : IUserService
         };
     }
 
+    public async Task<TokensModel> RefreshAccessTokenAsync(TokensModel tokensModel, CancellationToken cancellationToken)
+    {
+        var principal = _tokensService.GetPrincipalFromExpiredToken(tokensModel.AccessToken);
+        var userId = ObjectId.Parse(principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+
+        var refreshTokenModel = await this._refreshTokensRepository
+            .GetOneAsync(r => 
+                r.Token == tokensModel.RefreshToken 
+                && r.CreatedById == userId
+                && r.IsDeleted == false, cancellationToken);
+        if (refreshTokenModel == null || refreshTokenModel.ExpiryDateUTC < DateTime.UtcNow)
+        {
+            throw new SecurityTokenExpiredException("Refresh Token expired.");
+        }
+
+        var refreshToken = refreshTokenModel.Token;
+
+        // Update Refresh token if it expires in less than 7 days to keep user constantly logged in if he uses the app
+        if (refreshTokenModel.ExpiryDateUTC.AddDays(-7) < DateTime.UtcNow)
+        {
+            await _refreshTokensRepository.DeleteAsync(refreshTokenModel, cancellationToken);
+            
+            var newRefreshToken = await AddRefreshToken(userId, cancellationToken);
+            refreshToken = newRefreshToken.Token;
+        }
+
+        var tokens = new TokensModel
+        {
+            AccessToken = _tokensService.GenerateAccessToken(principal.Claims),
+            RefreshToken = refreshToken
+        };
+        
+
+        return tokens;
+    }
+    
     public async Task<UserDto> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
     {
         var role = await _rolesRepository.GetOneAsync(r => r.Name == roleName, cancellationToken);
@@ -249,7 +286,7 @@ public class UsersService : IUserService
         return refreshToken;
     }
     
-    private async void ValidateEmail(string email)
+    private void ValidateEmail(string email)
     {
         string regex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
 

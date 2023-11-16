@@ -19,9 +19,7 @@ public class UsagesHistoryRepository : BaseRepository<UsagesHistory>, IUsagesHis
         if (existingRecord != null)
         {
             int currentUsages = existingRecord.TotalUsages;
-
             int newUsages = currentUsages + 1;
-
             var update = Builders<UsagesHistory>.Update.Set(x => x.TotalUsages, newUsages);
 
             await _collection.UpdateOneAsync(filter, update);

@@ -61,6 +61,13 @@ public class UserController : BaseController
         return Ok(users);
     }
     
+    [HttpPost("token/refresh")]
+    public async Task<ActionResult<TokensModel>> RefreshAccessTokenAsync([FromBody] TokensModel tokensModel, CancellationToken cancellationToken)
+    {
+        var refreshedTokens = await _userService.RefreshAccessTokenAsync(tokensModel, cancellationToken);
+        return Ok(refreshedTokens);
+    }
+    
     [HttpDelete("{userId}/roles/{roleName}")]
     public async Task<ActionResult<PagedList<UserDto>>> RemoveFromeRoleAsync(string userId, string roleName, CancellationToken cancellationToken)
     {

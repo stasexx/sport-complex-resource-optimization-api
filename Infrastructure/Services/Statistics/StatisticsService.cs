@@ -1,4 +1,5 @@
 ﻿using Application.Models.Statistics;
+using MongoDB.Bson;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
 using SportComplexResourceOptimizationApi.Application.IServices.StatisticsService;
@@ -38,6 +39,37 @@ public class StatisticsService : IStatisticsService
 
         return equipmentStatistics;
     }
+    
+    public async Task<List<UsageStatistics>> GetUserEquipmentUsageStatistics(string userId, CancellationToken cancellationToken)
+    {
+        var count = await _reservationsRepository.GetCountAsync(r => r.CreatedById == ObjectId.Parse(userId), cancellationToken);
+        var userReservations = await _reservationsRepository.
+            GetPageAsync(1, count, r => r.CreatedById == ObjectId.Parse(userId), cancellationToken);
+
+        var equipmentUsageStatistics = new Dictionary<string, UsageStatistics>();
+
+        foreach (var reservation in userReservations)
+        {
+            var equipmentId = reservation.EquipmentId.ToString(); // Assuming EquipmentId is ObjectId
+            var equipmentName = await _equipmentsRepository.GetEquipmentNameById(reservation.EquipmentId);
+
+            if (!equipmentUsageStatistics.ContainsKey(equipmentId))
+            {
+                equipmentUsageStatistics[equipmentId] = new UsageStatistics
+                {
+                    EquipmentId = equipmentId,
+                    EquipmentName = equipmentName,
+                    TotalUsageTime = TimeSpan.Zero
+                };
+            }
+
+            equipmentUsageStatistics[equipmentId].TotalUsageTime += TimeSpan.FromMinutes(reservation.Duration);
+        }
+
+        return equipmentUsageStatistics.Values.ToList();
+    }
+
+
 
     public async Task<List<ReservationStatisticItem>> GetReservationStatisticsByHour()
     {

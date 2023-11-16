@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 using QRCoder;
 using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 
@@ -9,9 +6,9 @@ namespace SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
 
 public class QRCodeService : IQRCodeService
 {
-    public byte[] GenerateQRCode(string userId, string serviceId, int usages)
+    public byte[] GenerateQRCode(string userFirstName, string userLastName, int usages)
     {
-        var data = new { UserId = userId, ServiceId = serviceId, Usages = usages };
+        var data = new { FirstName = userFirstName, LastName = userLastName, Usages = usages };
         var jsonContent = JsonSerializer.Serialize(data);
 
         var qrGenerator = new QRCodeGenerator();

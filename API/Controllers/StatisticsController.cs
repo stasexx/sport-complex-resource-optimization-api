@@ -29,4 +29,11 @@ public class StatisticsController : BaseController
         return result;
         
     }
+    
+    [HttpGet("usages/{userId}")]
+    public async Task<List<UsageStatistics>> GetUserEquipmentUsageStatistics(string userId, CancellationToken cancellationToken)
+    {
+        var result = await _statisticsService.GetUserEquipmentUsageStatistics(userId, cancellationToken);
+        return result;
+    }
 }
