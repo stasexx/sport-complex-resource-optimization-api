@@ -42,4 +42,9 @@ public class SensorsService : ISensorService
         
         return dto;
     }
+
+    public async Task<Sensor> UpdateEquipment(string sensorId, string newEquipmentId, CancellationToken cancellationToken)
+    {
+        return await _sensorsRepository.UpdateEquipment(sensorId, newEquipmentId, cancellationToken);
+    }
 }

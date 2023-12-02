@@ -6,7 +6,7 @@ using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 
 namespace SportComplexResourceOptimization.Api.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("sensors")]
+[Route("sensors")]
 public class SensorsController : BaseController
 {
     private readonly ISensorService _sensorService;
@@ -27,6 +27,13 @@ public class SensorsController : BaseController
     public async Task<ActionResult<ServiceUpdateDto>> UpdateSensor([FromBody] SensorUpdateDto sensorUpdateDto, CancellationToken cancellationToken)
     {
         var result = await _sensorService.UpdateStatus(sensorUpdateDto, cancellationToken);
+        return Ok(result);
+    }
+    
+    [HttpPut("update/sensorId={sensorId}/equipmentId={equipmentId}")]
+    public async Task<ActionResult<ServiceUpdateDto>> UpdateEquipment(string sensorId, string equipmentId, CancellationToken cancellationToken)
+    {
+        var result = await _sensorService.UpdateEquipment(sensorId, equipmentId, cancellationToken);
         return Ok(result);
     }
 }
