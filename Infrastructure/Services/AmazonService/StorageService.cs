@@ -211,6 +211,6 @@ public class StorageService : IStorageService
 
     private string GetImageS3Url(string bucketName, string sportComplexId, string imageKey)
     {
-        return $"https://{bucketName}.s3.eu-north-1.amazonaws.com/{sportComplexId}/normal/{imageKey}";
+        return $"https://{bucketName}.s3.eu-north-1.amazonaws.com/{imageKey}";
     }
 }

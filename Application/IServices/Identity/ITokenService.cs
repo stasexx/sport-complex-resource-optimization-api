@@ -8,4 +8,6 @@ public interface ITokensService
 
     string GenerateRefreshToken();
 
+    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+
 }

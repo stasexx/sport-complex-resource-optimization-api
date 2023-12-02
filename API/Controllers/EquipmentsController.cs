@@ -1,6 +1,7 @@
 ﻿using Application.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
+using SportComplexResourceOptimizationApi.Application.Models.Identity;
 using SportComplexResourceOptimizationApi.Application.Models.UpdateDto;
 using SportComplexResourceOptimizationApi.Application.Paging;
 

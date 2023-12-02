@@ -8,7 +8,7 @@ namespace SportComplexResourceOptimizationApi.Application.IServices;
 
 public interface IUserService
 {
-    Task<UserDto> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken);
+    Task<TokensModel> AddUserAsync(UserCreateDto dto, CancellationToken cancellationToken);
 
     Task<UserDto> GetUserAsync(string id, CancellationToken cancellationToken);
 
@@ -21,4 +21,6 @@ public interface IUserService
     Task<UserDto> AddToRoleAsync(string userId, string roleName, CancellationToken cancellationToken);
 
     Task<UserDto> RemoveFromRoleAsync(string userId, string roleName, CancellationToken cancellationToken);
+
+    Task<TokensModel> RefreshAccessTokenAsync(TokensModel tokensModel, CancellationToken cancellationToken);
 }

@@ -3,6 +3,7 @@ using Persistence.Database;
 using SportComplexResourceOptimizationApi.Persistence.Repositories;
 using SportComplexResourceOptimizationApi.Application.IRepositories;
 using SportComplexResourceOptimizationApi.Application.IServices;
+using SportComplexResourceOptimizationApi.Domain.Entities;
 
 namespace SportComplexResourceOptimizationApi.Persistence.PersistenceExtensions;
 
@@ -22,6 +23,9 @@ public static class RepositoryExtansion
         services.AddScoped<IServiceSubscriptionsRepository, ServiceSubscriptionRepository>();
         services.AddScoped<IAbonnementsRepository, AbonnementRepository>();
         services.AddScoped<ISensorsRepository, SensorsRepository>();
+        services.AddScoped<IUsagesHistoryRepository, UsagesHistoryRepository>();
+        services.AddScoped<IFeedbacksRepository, FeedbacksRepository>();
+        services.AddScoped<IEquipmentsSetsRepository, EquipmentsSetsRepository>();
 
         return services;
     }

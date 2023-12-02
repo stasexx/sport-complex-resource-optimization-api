@@ -9,7 +9,9 @@ using SportComplexResourceOptimizationApi.Application.IServices.Identity;
 using SportComplexResourceOptimizationApi.Infrastructure.Services.Identity;
 using Amazon.S3;
 using SportComplexResourceOptimizationApi.Application.IServices.Amazon;
+using SportComplexResourceOptimizationApi.Application.IServices.StatisticsService;
 using SportComplexResourceOptimizationApi.Infrastructure.Services.AmazonService;
+using SportComplexResourceOptimizationApi.Infrastructure.Services.Statistics;
 
 namespace SportComplexResourceOptimizationApi.Infrastructure.InfrastructureExtentions;
 
@@ -31,6 +33,9 @@ public static class ServicesExtention
         services.AddScoped<IServiceSubscriptionService, ServiceSubscriptionsService>();
         services.AddScoped<IAbonnementService, AbonnementsService>();
         services.AddScoped<ISensorService, SensorsService>();
+        services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<IFeedbackService, FeedbacksService>();
+        services.AddScoped<IEquipmentsSetsService, EquipmentsSetsService>();
 
         return services;
     }

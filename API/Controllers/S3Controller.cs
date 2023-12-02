@@ -37,7 +37,7 @@ public class S3Controller : BaseController
         var qrCodeImageBytes = _qrCodeService.GenerateQRCode(userId, serviceId, usages);
         s3Obj.BucketName = _config["AmazonS3Config:QRCodeBucket"];
         s3Obj.InputStream = new MemoryStream(qrCodeImageBytes);
-        s3Obj.Name = $"{ssId}/qr-code/{Guid.NewGuid()}.png";
+        s3Obj.Name = $"{ssId}/main/{Guid.NewGuid()}.png";
 
         var cred = new AmazonCredentials()
         {
@@ -60,13 +60,13 @@ public class S3Controller : BaseController
     
     
     [HttpGet("images/{sportComplexId}")]
-    public async Task<ActionResult<StorageDto>> GetSportComplexImages(string sportComplexId)
+    public async Task<ActionResult<StorageDto>> GetImages(string sportComplexId, string bucketType)
     {
         var amazonS3Config = new AmazonCredentials
         {
             AccessKey = _config["AmazonS3Config:AccessKey"],
             SecretKey = _config["AmazonS3Config:SecretKey"],
-            BucketName = _config["AmazonS3Config:Bucket"]
+            BucketName = _config[$"AmazonS3Config:{bucketType}Bucket"]
         };
         
         var imageUrls = await _storageService.GetSportComplexImagesAsync(sportComplexId, amazonS3Config);

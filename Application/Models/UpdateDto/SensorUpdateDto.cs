@@ -2,7 +2,6 @@
 
 public class SensorUpdateDto
 {
-    public string Id { get; set; }
-    
+    public string EquipmentId { get; set; }
     public bool Status { get; set; }
 }

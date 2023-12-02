@@ -89,5 +89,5 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
         
         return result.DeletedCount > 0 ? entity : null;
     }
-
+    
 }

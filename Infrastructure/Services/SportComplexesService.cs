@@ -40,6 +40,7 @@ public class SportComplexesService : ISportComplexesService
             Name = complex.Name,
             Address = complex.Address,
             Email = complex.Email,
+            City = complex.City,
             Rating = complex.Rating,
             Description = complex.Description
         };
@@ -52,8 +53,9 @@ public class SportComplexesService : ISportComplexesService
     {
         var complex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplex.Id), cancellationToken);
 
-        this._mapper.Map(sportComplex, complex);
-        
+        var updatedSportComplex = this._mapper.Map(sportComplex, complex);
+        updatedSportComplex.LastModifiedDateUtc = DateTime.UtcNow;
+        updatedSportComplex.LastModifiedById = complex.CreatedById;
         var result = await _sportComplexesRepository.UpdateSportComplexAsync(complex, cancellationToken);
         
         return _mapper.Map<SportComplexDto>(result);
@@ -87,6 +89,22 @@ public class SportComplexesService : ISportComplexesService
         return _mapper.Map<SportComplexDto>(complex);
     }
     
+    public async Task<SportComplexDto> GetSportComplexAsync(string id, CancellationToken cancellationToken)
+    {
+        if (!ObjectId.TryParse(id, out var objectId))
+        {
+            throw new InvalidDataException("Provided id is invalid.");
+        }
+
+        var entity = await _sportComplexesRepository.GetOneAsync(objectId, cancellationToken);
+        if (entity == null)
+        {
+            throw new Exception(id);
+        }
+
+        return _mapper.Map<SportComplexDto>(entity);
+    }
+    
     public async Task<SportComplexDto> RevealSportComplex(string sportComplexId, CancellationToken cancellationToken)
     {
         var sportComplex = await _sportComplexesRepository.GetOneAsync(c => c.Id == ObjectId.Parse(sportComplexId), cancellationToken);
@@ -116,6 +134,28 @@ public class SportComplexesService : ISportComplexesService
         var dtos = _mapper.Map<List<SportComplexDto>>(entities);
         var count = await _sportComplexesRepository.GetTotalCountAsync(cancellationToken);
         return new PagedList<SportComplexDto>(dtos, pageNumber, pageSize, count);
+    }
+    
+    public async Task<PagedList<SportComplexDto>> GetVisibleSportComplexesByNamePages(int pageNumber, int pageSize, 
+        string partialName, CancellationToken cancellationToken)
+    {
+        var partialNameLower = partialName.ToLowerInvariant();
+        var entities = await _sportComplexesRepository.GetPageAsync(pageNumber, pageSize,
+            x => !x.IsDeleted && x.Name.ToLowerInvariant().Contains(partialNameLower),
+            cancellationToken);
+    
+        var sortedEntities = entities
+            .OrderBy(x => CompareSimilarity(x.Name, partialNameLower))
+            .ToList();
+
+        var dtos = _mapper.Map<List<SportComplexDto>>(sortedEntities);
+        var count = await _sportComplexesRepository.GetTotalCountAsync(cancellationToken);
+        return new PagedList<SportComplexDto>(dtos, pageNumber, pageSize, count);
+    }
+    
+    public int CompareSimilarity(string str1, string str2)
+    {
+        return Math.Abs(str1.Length - str2.Length);
     }
 
 }

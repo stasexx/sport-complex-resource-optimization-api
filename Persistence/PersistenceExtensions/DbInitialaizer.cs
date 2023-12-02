@@ -79,8 +79,8 @@ public class DbInitialaizer
             {
                 Id = ObjectId.Parse("6533bded80fbc6e96250575b"),
                 Phone = "+380953826869",
-                Email = "shopping.assistant.team@gmail.com",
-                PasswordHash = "Yuiop12345",
+                Email = "bondarenko.taras@gmail.com",
+                PasswordHash = "taeas12345",
                 CreatedById = ObjectId.Parse("6533bded80fbc6e96250575b"),
                 CreatedDateUtc = DateTime.UtcNow,
                 LastModifiedById = ObjectId.Parse("6533bded80fbc6e96250575b"),

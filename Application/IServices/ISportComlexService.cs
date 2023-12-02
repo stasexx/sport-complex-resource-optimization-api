@@ -24,4 +24,9 @@ public interface ISportComplexesService
     Task<SportComplexDto> HideSportComplex(string sportComplexId, CancellationToken cancellationToken);
 
     Task<SportComplexDto> RevealSportComplex(string sportComplexId, CancellationToken cancellationToken);
+
+    Task<PagedList<SportComplexDto>> GetVisibleSportComplexesByNamePages(int pageNumber, int pageSize,
+        string partialName, CancellationToken cancellationToken);
+
+    Task<SportComplexDto> GetSportComplexAsync(string id, CancellationToken cancellationToken);
 }

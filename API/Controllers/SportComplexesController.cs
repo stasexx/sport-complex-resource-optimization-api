@@ -1,3 +1,4 @@
+using Application.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportComplexResourceOptimizationApi.Application.IServices;
@@ -17,16 +18,15 @@ public class SportComplexesController : BaseController
     {
         _sportComplexesService = sportComplexesService;
     }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
+    
+    [HttpPost("create/{ownerId}")]
+    public async Task<ActionResult<SportComplexDto>> CreateSportComplex([FromBody] SportComplexCreateDto createDto, string ownerId,
         CancellationToken cancellationToken)
     {
-        await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
-        return Ok();
+        var result = await _sportComplexesService.CreateSportComplex(createDto, ownerId, cancellationToken);
+        return Ok(result);
     }
     
-    [Authorize(Roles = "Admin, Owner")]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateSportComplex([FromBody] SportComplexUpdateDto updateDto,
         CancellationToken cancellationToken)
@@ -34,8 +34,7 @@ public class SportComplexesController : BaseController
         var result = await _sportComplexesService.UpdateSportComplex(updateDto, cancellationToken);
         return Ok(result);
     }
-
-    [Authorize(Roles = "Admin, Owner")]
+    
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteSportComplex(string sportComplexId, CancellationToken cancellationToken)
     {
@@ -66,13 +65,28 @@ public class SportComplexesController : BaseController
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpGet("all")]
     public async Task<IActionResult> GetSportComplexesPages(int pageNumber, int pageSize,
         CancellationToken cancellationToken)
     {
         var result =
             await _sportComplexesService.GetSportComplexesPages(pageNumber, pageSize, cancellationToken);
+        return Ok(result);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<ActionResult<SportComplexDto>> GetUserAsync(string id, CancellationToken cancellationToken)
+    {
+        var user = await _sportComplexesService.GetSportComplexAsync(id, cancellationToken);
+        return Ok(user);
+    }
+    
+    [HttpGet("search/{name}")]
+    public async Task<IActionResult> GetVisibleSportComplexesByNamePages(int pageNumber, int pageSize, string name,
+        CancellationToken cancellationToken)
+    {
+        var result =
+            await _sportComplexesService.GetVisibleSportComplexesByNamePages(pageNumber, pageSize,name, cancellationToken);
         return Ok(result);
     }
     
